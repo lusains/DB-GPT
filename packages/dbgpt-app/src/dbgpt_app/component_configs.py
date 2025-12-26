@@ -107,6 +107,10 @@ def _initialize_resource_manager(system_app: SystemApp):
         get_current_host_system_load,
     )
     from dbgpt.agent.expand.resources.search_tool import baidu_search
+    from dbgpt.agent.expand.resources.vanna_text2sql_tool import (
+        get_database_schema,
+        run_sql,
+    )
     from dbgpt.agent.resource.base import ResourceType
     from dbgpt.agent.resource.manage import get_resource_manager, initialize_resource
     from dbgpt_serve.agent.resource.app import GptAppResource
@@ -124,6 +128,9 @@ def _initialize_resource_manager(system_app: SystemApp):
     rm.register_resource(resource_instance=Terminate())
     # Register a search tool
     rm.register_resource(resource_instance=baidu_search)
+    # Register Vanna Text2SQL tools (following Vanna 2.0 architecture)
+    rm.register_resource(resource_instance=get_database_schema)
+    rm.register_resource(resource_instance=run_sql)
     rm.register_resource(resource_instance=list_dbgpt_support_models)
     # Register host tools
     rm.register_resource(resource_instance=get_current_host_cpu_status)

@@ -18,16 +18,24 @@ path = "pilot/meta_data/dbgpt.db"
 type = "chroma"
 persist_path = "pilot/data"
 
+[rag.storage.graph]
+type = "neo4j"
+host="127.0.0.1"
+port=7687
+username="neo4j"
+database="neo4j"
+password="neo4jneo4j"
+
 # Model Configurations
 [models]
 [[models.llms]]
-name = "${env:LLM_MODEL_NAME:-gpt-4o}"
+name = "${env:LLM_MODEL_NAME:-gpt-5.1}"
 provider = "${env:LLM_MODEL_PROVIDER:-proxy/openai}"
-api_base = "${env:OPENAI_API_BASE:-https://api.openai.com/v1}"
+api_base = "${env:OPENAI_API_BASE:-https://api-2.xi-ai.cn/v1}"
 api_key = "${env:OPENAI_API_KEY}"
 
 [[models.embeddings]]
 name = "${env:EMBEDDING_MODEL_NAME:-text-embedding-3-small}"
 provider = "${env:EMBEDDING_MODEL_PROVIDER:-proxy/openai}"
-api_url = "${env:EMBEDDING_MODEL_API_URL:-https://api.openai.com/v1/embeddings}"
+api_url = "${env:EMBEDDING_MODEL_API_URL:-https://api-2.xi-ai.cn/v1/embeddings}"
 api_key = "${env:OPENAI_API_KEY}"
