@@ -2,6 +2,7 @@ import asyncio
 import json
 import logging
 import os
+import traceback
 from datetime import datetime
 from enum import Enum
 from typing import List, Optional, cast
@@ -628,7 +629,6 @@ class Service(BaseService[KnowledgeSpaceEntity, SpaceServeRequest, SpaceServeRes
             ]
             self._chunk_dao.create_documents_chunks(chunk_entities)
         except Exception as e:
-            import traceback
             doc.status = SyncStatus.FAILED.name
             doc.result = "document embedding failed" + str(e)
             error_traceback = traceback.format_exc()
