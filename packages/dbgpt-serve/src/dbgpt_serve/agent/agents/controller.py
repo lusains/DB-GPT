@@ -616,7 +616,7 @@ class MultiAgents(BaseComponent, ABC):
             if not app_link_start:
                 self.gpts_conversations.update(conv_uid, gpts_status)
         except Exception as e:
-            logger.error(f"chat abnormal termination！{str(e)}", e)
+            logger.error(f"chat abnormal termination！{str(e)}", exc_info=True)
             self.gpts_conversations.update(conv_uid, Status.FAILED.value)
         finally:
             if not app_link_start:

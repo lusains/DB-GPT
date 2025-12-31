@@ -117,25 +117,6 @@ function Default() {
                 setActiveKey(value as string);
               }}
             />
-            <span className='flex items-center text-gray-500 gap-1 dark:text-slate-300'>
-              <span>没有心仪的应用？去</span>
-              <span
-                className='flex items-center cursor-pointer'
-                onClick={() => {
-                  router.push('/');
-                }}
-              >
-                <Image
-                  key='image_explore'
-                  src={'/pictures/explore_active.png'}
-                  alt='construct_image'
-                  width={24}
-                  height={24}
-                />
-                <span className='text-default'>探索广场</span>
-              </span>
-              <span>发现更多</span>
-            </span>
           </div>
           <TabContent apps={apps?.app_list || []} loading={loading} refresh={refresh} />
           {helps && helps.length > 0 && (

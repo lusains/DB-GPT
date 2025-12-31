@@ -1,0 +1,2613 @@
+@prefix : <http://datahub/cost#> .
+@prefix ex: <http://datahub/cost#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://datahub/cost#> .
+
+<http://datahub/cost> rdf:type owl:Ontology .
+
+#################################################################
+#    Annotation properties
+#################################################################
+
+###  http://datahub/cost#description
+ex:description rdf:type owl:AnnotationProperty ;
+               rdfs:comment "具体介绍某个字段的含义、作用以及引申的逻辑关系"@zh .
+
+
+###  http://datahub/cost#examples
+ex:examples rdf:type owl:AnnotationProperty ;
+            rdfs:comment "某个字段的示例"@zh .
+
+
+###  http://datahub/cost#rules
+ex:rules rdf:type owl:AnnotationProperty ;
+         ex:rules "说明某个字段在推理过程中有哪些规则、该如何使用"@zh .
+
+
+###  http://datahub/cost#source_mapping
+ex:source_mapping rdf:type owl:AnnotationProperty ;
+                  ex:rules "说明从数据源中获取实例的规则"@zh .
+
+
+#################################################################
+#    Datatypes
+#################################################################
+
+###  http://www.w3.org/2001/XMLSchema#date
+xsd:date rdf:type rdfs:Datatype .
+
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://datahub/cost#belongs_to_level_1_service_type
+ex:belongs_to_level_1_service_type rdf:type owl:ObjectProperty ,
+                                            owl:FunctionalProperty ;
+                                   rdfs:domain ex:service_type ;
+                                   rdfs:range ex:service_type ;
+                                   ex:examples "标准账号对接  belongs to level 1 service type 标准服务" ;
+                                   ex:source_mapping """原始表X服务类型
+二级服务类型 为domain
+一级服务类型 为range""" ;
+                                   rdfs:comment "某个二级服务类型，归属于哪个一级服务类型" ;
+                                   rdfs:label "归属一级服务类型" .
+
+
+###  http://datahub/cost#belongs_to_parent_corporate_budget
+ex:belongs_to_parent_corporate_budget rdf:type owl:ObjectProperty ,
+                                               owl:FunctionalProperty ;
+                                      rdfs:domain ex:corporate_budget ;
+                                      rdfs:range ex:corporate_budget ;
+                                      ex:examples "25Q4-DKYX-V4.3 belongs to parent corporate budget 25T-TBG-Q4-PRO-V4.3" ;
+                                      ex:source_mapping """原始表6
+项目预算ID 为domain
+同行的二级预算ID 为range""" ;
+                                      rdfs:comment "某个三级公司预算，归属于哪个二级公司预算" ;
+                                      rdfs:label "所属上级公司预算" .
+
+
+###  http://datahub/cost#belongs_to_parent_department
+ex:belongs_to_parent_department rdf:type owl:ObjectProperty ,
+                                         owl:FunctionalProperty ;
+                                rdfs:domain ex:department ;
+                                rdfs:range ex:department ;
+                                ex:examples "军工一组 belongs to parent department 大客特种" ;
+                                ex:source_mapping """原始表X部门
+某个实例 为domain
+其同行左侧列的实例 为range""" ;
+                                rdfs:comment "某个子部门的上级部门是哪个" ;
+                                rdfs:label "归属上级部门" .
+
+
+###  http://datahub/cost#belongs_to_product_catalogy
+ex:belongs_to_product_catalogy rdf:type owl:ObjectProperty ,
+                                        owl:FunctionalProperty ;
+                               rdfs:domain ex:product ;
+                               rdfs:range ex:product_catelogy ;
+                               ex:source_mapping """\"所有产品为domain
+range先从原始表4 E列对应的T列成本产品线找最多的一个
+为空的话去原始表X日报明细 I列对应的U列找最多的一个\"""" ;
+                               rdfs:comment "某个产品在计算成本时，归属于哪个产品类别" ;
+                               rdfs:label "所属产品成本类别" .
+
+
+###  http://datahub/cost#belongs_to_product_line
+ex:belongs_to_product_line rdf:type owl:ObjectProperty ,
+                                    owl:FunctionalProperty ;
+                           rdfs:domain ex:product ;
+                           rdfs:range ex:produce_line ;
+                           ex:source_mapping "原始表X 日报明细-日报明细 I列产品类型为domain J列产品条线为range" ;
+                           rdfs:comment "某个产品属于哪个产品条线" ;
+                           rdfs:label "归属产品条线" .
+
+
+###  http://datahub/cost#belongs_to_service_catalogy
+ex:belongs_to_service_catalogy rdf:type owl:ObjectProperty ,
+                                        owl:FunctionalProperty ;
+                               rdfs:domain ex:service ;
+                               rdfs:range ex:service_catalogy ;
+                               ex:source_mapping """\"原始表6
+服务类目 为range
+同行的服务申请编号 为domain\"""" ;
+                               rdfs:comment "某个服务申请时的服务类目，用于对外包服务商说明的任务内容分类" ;
+                               rdfs:label "所属服务类目" .
+
+
+###  http://datahub/cost#contain_product
+ex:contain_product rdf:type owl:ObjectProperty ,
+                            owl:FunctionalProperty ;
+                   rdfs:domain ex:order ;
+                   rdfs:range ex:product ;
+                   ex:examples "S00540771 contain product WPS 365教育高级版" ;
+                   ex:source_mapping """原始表4
+订单号 为domain
+同行的产品名称 为range""" ;
+                   rdfs:comment "某个订单中包含什么产品，即客户想要购买什么产品" ;
+                   rdfs:label "包含产品" .
+
+
+###  http://datahub/cost#contain_projects
+ex:contain_projects rdf:type owl:ObjectProperty ,
+                             owl:InverseFunctionalProperty ;
+                    rdfs:domain ex:customer ;
+                    rdfs:range ex:project ;
+                    ex:source_mapping """\"原始表X PMS
+A列项目编号 为range
+同行的 G列客户编号 为domain\"""" ;
+                    rdfs:comment "客户名下都包含哪些项目" ;
+                    rdfs:label "包含项目" .
+
+
+###  http://datahub/cost#contractor_work_belongs_to_product
+ex:contractor_work_belongs_to_product rdf:type owl:ObjectProperty ,
+                                               owl:FunctionalProperty ;
+                                      rdfs:domain ex:contractor_work ;
+                                      rdfs:range ex:product ;
+                                      ex:source_mapping "原始表X 服务商日报-工程师日报 A日报明细名称作为domain、Q产品名称（项目产品库）为range" ;
+                                      rdfs:comment "外包工作是针对哪个产品产生的" ;
+                                      rdfs:label "外包工作涉及产品" .
+
+
+###  http://datahub/cost#contractor_work_belongs_to_task
+ex:contractor_work_belongs_to_task rdf:type owl:ObjectProperty ,
+                                            owl:FunctionalProperty ;
+                                   rdfs:domain ex:contractor_work ;
+                                   rdfs:range ex:task ;
+                                   ex:source_mapping "原始表X 服务商日报-工程师日报 A日报明细名称作为domain、AO任务书编号 为range" ;
+                                   rdfs:comment "外包工作属于哪个外包任务" ;
+                                   rdfs:label "外包工作归属任务" .
+
+
+###  http://datahub/cost#customer_belongs_to_department
+ex:customer_belongs_to_department rdf:type owl:ObjectProperty ,
+                                           owl:FunctionalProperty ;
+                                  rdfs:domain ex:customer ;
+                                  rdfs:range ex:department ;
+                                  ex:source_mapping """\"原始表X PMS
+P列客户归属部门为range
+同行的 G列客户编号 为domain\"""" ;
+                                  rdfs:comment "客户由公司内的哪个部门负责，最终外包服务成本也按照此部门计算归属" ;
+                                  rdfs:label "客户由某个部门负责" .
+
+
+###  http://datahub/cost#depend_on_level_2_corporate_budget
+ex:depend_on_level_2_corporate_budget rdf:type owl:ObjectProperty ,
+                                               owl:FunctionalProperty ;
+                                      rdfs:domain ex:service ;
+                                      rdfs:range ex:corporate_budget ;
+                                      ex:examples "PR-20250926-0005 depend on level 2 corporate budget 25T-TBG-Q4-PRO-V4.3" ;
+                                      ex:source_mapping """原始表6 
+二级预算ID 为range
+同行的 服务申请编号 为domain""" ;
+                                      rdfs:comment "某个服务的费用计划依赖哪个预算级别为“二级”的公司预算" ;
+                                      rdfs:label "依赖公司二级预算" .
+
+
+###  http://datahub/cost#depend_on_level_3_corporate_budget
+ex:depend_on_level_3_corporate_budget rdf:type owl:ObjectProperty ,
+                                               owl:FunctionalProperty ;
+                                      rdfs:domain ex:service ;
+                                      rdfs:range ex:corporate_budget ;
+                                      ex:examples "PR-20250926-0005 depend on level 3 corporate budget 25Q4-DKYX-V4.3" ;
+                                      ex:source_mapping """原始表6 
+预算映射ID 为range
+同行的 服务申请编号 为domain""" ;
+                                      rdfs:comment "某个服务申请的费用计划依赖哪个预算级别为“三级”的公司预算" ;
+                                      rdfs:label "依赖公司三级预算" .
+
+
+###  http://datahub/cost#depend_on_opportunity
+ex:depend_on_opportunity rdf:type owl:ObjectProperty ,
+                                  owl:FunctionalProperty ;
+                         rdfs:domain ex:project_budget ;
+                         rdfs:range ex:opportunity ;
+                         owl:propertyDisjointWith ex:depend_on_order ;
+                         ex:examples "PBD＃20250100035 depend on opportunity PR-00167290" ;
+                         ex:source_mapping """原始表4 \"订单号”若没有值且“商机号”有值情况下
+取“项目预算明细编号”为domain
+取同行“商机号”为range""" ;
+                         rdfs:comment "项目申请该预算，因为客户已产生了商机" ;
+                         rdfs:label "项目预算依赖商机" .
+
+
+###  http://datahub/cost#depend_on_order
+ex:depend_on_order rdf:type owl:ObjectProperty ,
+                            owl:FunctionalProperty ;
+                   rdfs:domain ex:project_budget ;
+                   rdfs:range ex:order ;
+                   ex:examples "PBD＃20250600001 depend on order S00292777" ;
+                   ex:source_mapping """原始表4 \"订单号”若有值
+取“项目预算明细编号”为domain
+取同行“订单号”为range""" ;
+                   rdfs:comment "项目申请该预算，因为客户已产生了实际订单" ;
+                   rdfs:label "项目预算依赖订单" .
+
+
+###  http://datahub/cost#depend_on_project_budget
+ex:depend_on_project_budget rdf:type owl:ObjectProperty ,
+                                     owl:FunctionalProperty ;
+                            rdfs:domain ex:service ;
+                            rdfs:range ex:project_budget ;
+                            ex:examples "PR-20250926-0005 depend on project budget PBD＃20250100035" ;
+                            ex:source_mapping """原始表4 
+项目预算明细编号 为range
+同行的 服务申请编号 为domain""" ;
+                            rdfs:comment "某个服务申请的费用计划依赖哪个项目预算" ;
+                            rdfs:label "依赖项目预算" .
+
+
+###  http://datahub/cost#employee_work_belongs_to_service_type
+ex:employee_work_belongs_to_service_type rdf:type owl:ObjectProperty ,
+                                                  owl:FunctionalProperty ;
+                                         rdfs:domain ex:employee_work ;
+                                         rdfs:range ex:service_type ;
+                                         ex:source_mapping """\"原始表X 日报明细-日报明细
+X列 服务项目 为range
+A列编号 为domain
+其中部分服务项目要做转化
+私有云升级-----专项服务-升级
+标准培训服务-----标准培训
+远程技术支持------远程支持服务\"""" ;
+                                         rdfs:comment "正编工作的内容属于什么服务类型" ;
+                                         rdfs:label "正编工作所属服务类型" .
+
+
+###  http://datahub/cost#generate_employee_work
+ex:generate_employee_work rdf:type owl:ObjectProperty ,
+                                   owl:InverseFunctionalProperty ;
+                          rdfs:domain ex:project ;
+                          rdfs:range ex:employee_work ;
+                          ex:source_mapping """原始表X M列项目编号为domain
+A列编号为range""" ;
+                          rdfs:comment "当某个正编员工在某个项目产生工时投入时，即记录一条正编工作，工时会按照公式计算为金额，作为项目成本" ;
+                          rdfs:label "项目产生正编工作" .
+
+
+###  http://datahub/cost#generate_opportunity
+ex:generate_opportunity rdf:type owl:ObjectProperty ,
+                                 owl:InverseFunctionalProperty ;
+                        rdfs:domain ex:customer ;
+                        rdfs:range ex:opportunity ;
+                        ex:source_mapping """\"原始表4 
+商机号 为range
+同行的 客户名称 匹配到对应的客户ID 为domain\"""" ;
+                        rdfs:comment "客户会产生哪个商机，有意向购买我们产品" ;
+                        rdfs:label "客户产生商机" .
+
+
+###  http://datahub/cost#generate_order
+ex:generate_order rdf:type owl:ObjectProperty ,
+                           owl:InverseFunctionalProperty ;
+                  rdfs:domain ex:opportunity ;
+                  rdfs:range ex:order ;
+                  ex:source_mapping """原始表4 
+订单号 为range
+同行的 客户名称 为domain""" ;
+                  rdfs:comment "客户实际需要购买某个产品时，由销售负责人根据商机，在公司内部产生订单" ;
+                  rdfs:label "客户产生订单" .
+
+
+###  http://datahub/cost#generate_project_budget
+ex:generate_project_budget rdf:type owl:ObjectProperty ,
+                                    owl:InverseFunctionalProperty ;
+                           rdfs:domain ex:project ;
+                           rdfs:range ex:project_budget ;
+                           ex:source_mapping """原始表4 
+项目预算明细编号 为range
+同行的 项目名称 匹配到的项目ID 为domain""" ;
+                           rdfs:comment "某个项目为了后续潜在的外包服务，提前申请的预算" ;
+                           rdfs:label "项目产生项目预算" .
+
+
+###  http://datahub/cost#generate_single-customer_service
+ex:generate_single-customer_service rdf:type owl:ObjectProperty ,
+                                             owl:InverseFunctionalProperty ;
+                                    rdfs:domain ex:project ;
+                                    rdfs:range ex:service ;
+                                    ex:source_mapping """服务为单客户时
+原始表4 
+服务申请编号为range
+同行的 项目名称 匹配到的项目ID 为domain\"""" ;
+                                    rdfs:comment "某个项目需要培训、定制等服务时，产生的外包服务申请，可能是单客户项目整包，也可能是单客户人员外包" ;
+                                    rdfs:label "项目产生单客户外包服务" .
+
+
+###  http://datahub/cost#generate_task
+ex:generate_task rdf:type owl:ObjectProperty ,
+                          owl:InverseFunctionalProperty ;
+                 rdfs:domain ex:service ;
+                 rdfs:range ex:task ;
+                 ex:source_mapping """\"原始表3、原始表5
+任务书编号 为range
+同行的 服务申请编号 为domain\"""" ;
+                 rdfs:comment "某个服务申请通过后，基于这个申请产生的任务" ;
+                 rdfs:label "外包服务产生任务" .
+
+
+###  http://datahub/cost#multi-customer_service_belongs_to_department
+ex:multi-customer_service_belongs_to_department rdf:type owl:ObjectProperty ,
+                                                         owl:FunctionalProperty ;
+                                                rdfs:domain ex:service ;
+                                                rdfs:range ex:department ;
+                                                ex:source_mapping """\"服务为多客户服务时
+原始表6 K列项目负责人部门\"""" ;
+                                                rdfs:comment "多客户服务产生的费用成本归属到公司哪个部门" ;
+                                                rdfs:label "多客户外包服务成本归属部门" .
+
+
+###  http://datahub/cost#order_belongs_to_department
+ex:order_belongs_to_department rdf:type owl:ObjectProperty ,
+                                        owl:FunctionalProperty ;
+                               rdfs:domain ex:order ;
+                               rdfs:range ex:department ;
+                               ex:examples "S00540771 order belongs to department 教育销售华东组" ;
+                               ex:source_mapping """原始表4
+订单号 为domain
+根据服务申请编号，在原始表6寻找订单/商机归属部门 为range""" ;
+                               rdfs:comment "主某个订单由公司内的哪个部门负责，通常与订单所属客户的负责部门相同" ;
+                               rdfs:label "订单由某个部门负责" .
+
+
+###  http://datahub/cost#product_involved_in_employee_work
+ex:product_involved_in_employee_work rdf:type owl:ObjectProperty ,
+                                              owl:FunctionalProperty ;
+                                     rdfs:domain ex:employee_work ;
+                                     rdfs:range ex:product ;
+                                     ex:source_mapping """原始表X 日报明细-日报明细
+I列 产品类型 为range
+A列编号 为domain""" ;
+                                     rdfs:comment "正编工作的内容主要是对什么产品发生的" ;
+                                     rdfs:label "正编工作涉及产品" .
+
+
+###  http://datahub/cost#product_involved_in_service
+ex:product_involved_in_service rdf:type owl:ObjectProperty ,
+                                        owl:FunctionalProperty ;
+                               rdfs:domain ex:service ;
+                               rdfs:range ex:product ;
+                               ex:source_mapping "原始表4 E列产品名称为range、A列服务申请为domain" ;
+                               rdfs:comment "外包服务主要针对哪个产品，项目整包时，对应的任务即针对此产品" ;
+                               rdfs:label "外包服务涉及产品" .
+
+
+###  http://datahub/cost#project-based_task_belongs_to_product_catalogy
+ex:project-based_task_belongs_to_product_catalogy rdf:type owl:ObjectProperty ,
+                                                           owl:FunctionalProperty ;
+                                                  rdfs:domain ex:task ;
+                                                  rdfs:range ex:product_catelogy ;
+                                                  ex:source_mapping """\"原始表3 （这个表里本身都是整包的任务）
+任务书编号 为domain
+根据同行的服务申请编号，在原始表4找到对应的T列“成本产品线”为range\"""" ;
+                                                  rdfs:comment "当任务对应的服务为项目整包时，任务产生的成本归属到哪个产品类别" ;
+                                                  rdfs:label "整包任务费用归属产品类别" .
+
+
+###  http://datahub/cost#project-based_task_belongs_to_service_type
+ex:project-based_task_belongs_to_service_type rdf:type owl:ObjectProperty ,
+                                                       owl:FunctionalProperty ;
+                                              rdfs:domain ex:task ;
+                                              rdfs:range ex:service_type ;
+                                              ex:source_mapping """\"原始表3 项目任务书
+F列任务书编号 为domain
+对应E列服务申请 在原始表4中对应K列 服务类型（预算） 为range\"""" ;
+                                              rdfs:comment "某个整包任务归属于我们公司内部定义的哪种服务类型" ;
+                                              rdfs:label "整包任务归属服务类型" .
+
+
+###  http://datahub/cost#project_belongs_to_department
+ex:project_belongs_to_department rdf:type owl:ObjectProperty ,
+                                          owl:FunctionalProperty ;
+                                 rdfs:domain ex:project ;
+                                 rdfs:range ex:department ;
+                                 ex:source_mapping """\"原始表X PMS
+AB列 当前负责人所属四级部门 为range
+A列项目编号 为domain\"""" ;
+                                 rdfs:comment "项目由公司内的哪个部门负责，通常为项目负责人所在的部门" ;
+                                 rdfs:label "项目由某个部门负责" .
+
+
+###  http://datahub/cost#project_generate_contractor_work
+ex:project_generate_contractor_work rdf:type owl:ObjectProperty ,
+                                             owl:InverseFunctionalProperty ;
+                                    rdfs:domain ex:project ;
+                                    rdfs:range ex:contractor_work ;
+                                    ex:source_mapping "原始表X 服务商日报-工程师日报 AA主项目编号作为domain、A日报明细名称作为range" ;
+                                    rdfs:comment "当某个外包员工在某个项目产生工时投入时，即记录一条外包工作，外包工作经验收后的成本可计入项目成本" ;
+                                    rdfs:label "项目产生外包工作" .
+
+
+###  http://datahub/cost#task_generate_contractor_work_acceptance
+ex:task_generate_contractor_work_acceptance rdf:type owl:ObjectProperty ,
+                                                     owl:InverseFunctionalProperty ;
+                                            rdfs:domain ex:task ;
+                                            rdfs:range ex:contractor_work_acceptance ;
+                                            ex:source_mapping "原始表11 C列任务书编号为domain、A列为range" ;
+                                            rdfs:comment "对哪个外包任务进行了月度验收" ;
+                                            rdfs:label "外包任务发生月度验收" .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://datahub/cost#Task_Engineer_Total_Price
+ex:Task_Engineer_Total_Price rdf:type owl:DatatypeProperty ,
+                                      owl:FunctionalProperty ;
+                             rdfs:domain ex:task ;
+                             rdfs:range xsd:decimal ;
+                             ex:source_mapping "原始表5 签约状态 Z列总金额" ;
+                             rdfs:comment "仅人员外包的任务涉及，指这次任务需要外包工程师投入的预估总价（按人天计算）" ;
+                             rdfs:label "任务工程师总价" .
+
+
+###  http://datahub/cost#Task_Engineer_Total_Service_Hours
+ex:Task_Engineer_Total_Service_Hours rdf:type owl:DatatypeProperty ,
+                                              owl:FunctionalProperty ;
+                                     rdfs:domain ex:task ;
+                                     rdfs:range xsd:integer ;
+                                     ex:source_mapping "原始表5 签约状态 Y列服务总人天" ;
+                                     rdfs:label "任务工程师服务总工时" .
+
+
+###  http://datahub/cost#Task_Engineer_Unit_Price
+ex:Task_Engineer_Unit_Price rdf:type owl:DatatypeProperty ,
+                                     owl:FunctionalProperty ;
+                            rdfs:domain ex:task ;
+                            rdfs:range xsd:decimal ;
+                            ex:source_mapping "原始表5 签约状态 X列单价" ;
+                            rdfs:comment "仅人员外包的任务涉及，指派发的外包工程师工时单价（按人天计算）" ;
+                            rdfs:label "任务工程师单价" .
+
+
+###  http://datahub/cost#approval_status
+ex:approval_status rdf:type owl:DatatypeProperty ,
+                            owl:FunctionalProperty ;
+                   rdfs:domain ex:service ;
+                   rdfs:range xsd:string ;
+                   ex:examples "审批通过" ;
+                   ex:source_mapping "原始表6 审批状态" ;
+                   rdfs:comment "服务申请是否已经在公司内审批通过" ;
+                   rdfs:label "审批状态" ;
+                   owl:versionInfo 1124 .
+
+
+###  http://datahub/cost#contract_entity
+ex:contract_entity rdf:type owl:DatatypeProperty ,
+                            owl:FunctionalProperty ;
+                   rdfs:domain ex:task ;
+                   rdfs:range xsd:string ;
+                   ex:examples "北京金山办公软件股份有限公司" ;
+                   ex:source_mapping "原始表3、原始表5 我司签约主体" ;
+                   rdfs:comment "与服务商签约合同的是我司的哪家分公司" ;
+                   rdfs:label "签约主体" .
+
+
+###  http://datahub/cost#contractor_work_Date
+ex:contractor_work_Date rdf:type owl:DatatypeProperty ,
+                                 owl:FunctionalProperty ;
+                        rdfs:domain ex:contractor_work ;
+                        rdfs:range xsd:date ;
+                        ex:source_mapping "原始表X 服务商日报-工程师日报明细 AK列日报归属日期" ;
+                        rdfs:comment "外包工作发生的日期" ;
+                        rdfs:label "外包工作发生时间" .
+
+
+###  http://datahub/cost#contractor_work_Description
+ex:contractor_work_Description rdf:type owl:DatatypeProperty ,
+                                        owl:FunctionalProperty ;
+                               rdfs:domain ex:contractor_work ;
+                               rdfs:range xsd:string ;
+                               ex:source_mapping "原始表X 服务商日报-工程师日报明细 G列工作描述" ;
+                               rdfs:comment "外包工作的具体内容" ;
+                               rdfs:label "外包工作描述" .
+
+
+###  http://datahub/cost#contractor_work_Engineer
+ex:contractor_work_Engineer rdf:type owl:DatatypeProperty ,
+                                     owl:FunctionalProperty ;
+                            rdfs:domain ex:contractor_work ;
+                            rdfs:range xsd:string ;
+                            ex:source_mapping "原始表X 服务商日报-工程师日报明细 AM列工程师姓名" ;
+                            rdfs:comment "哪个外包工程师投入了项目工作" ;
+                            rdfs:label "外包工作工程师" .
+
+
+###  http://datahub/cost#contractor_work_Method
+ex:contractor_work_Method rdf:type owl:DatatypeProperty ,
+                                   owl:FunctionalProperty ;
+                          rdfs:domain ex:contractor_work ;
+                          rdfs:range xsd:string ;
+                          ex:source_mapping "原始表X 服务商日报-工程师日报明细 U列服务方式" ;
+                          rdfs:comment """\"外包工作是否要到现场，枚举包括
+-现场技术支持（三天内）
+-现场技术支持（三天以上）
+-远程技术支持
+-驻场服务\"""" ;
+                          rdfs:label "外包工作方式" .
+
+
+###  http://datahub/cost#contractor_work_Type
+ex:contractor_work_Type rdf:type owl:DatatypeProperty ,
+                                 owl:FunctionalProperty ;
+                        rdfs:domain ex:contractor_work ;
+                        rdfs:range xsd:string ;
+                        ex:source_mapping "原始表X 服务商日报-工程师日报明细 F列工作类型" ;
+                        rdfs:comment "用于将不同外包工作内容分类" ;
+                        rdfs:label "外包工作类型" .
+
+
+###  http://datahub/cost#contractor_work_Vendor
+ex:contractor_work_Vendor rdf:type owl:DatatypeProperty ,
+                                   owl:FunctionalProperty ;
+                          rdfs:domain ex:contractor_work ;
+                          rdfs:range xsd:string ;
+                          ex:source_mapping "原始表X 服务商日报-工程师日报明细 M列所属部门" ;
+                          rdfs:comment "投入该工作的外包工程师归属哪家服务商，枚举包括" ;
+                          rdfs:label "外包工作所属服务商" .
+
+
+###  http://datahub/cost#contractor_work__Project_Phase
+ex:contractor_work__Project_Phase rdf:type owl:DatatypeProperty ,
+                                           owl:FunctionalProperty ;
+                                  rdfs:domain ex:contractor_work ;
+                                  rdfs:range xsd:string ;
+                                  ex:source_mapping "原始表X 服务商日报-工程师日报明细 AE列项目全周期阶段" ;
+                                  rdfs:comment """\"工作发生时项目所处的阶段，按照项目的发展顺序，枚举如下
+-需求交流
+-方案确认
+-推动签约
+-投产阶段
+-推广验收
+-运维阶段\"""" ;
+                                  rdfs:label "外包工作所属项目阶段" .
+
+
+###  http://datahub/cost#contractor_work_acceptance_content
+ex:contractor_work_acceptance_content rdf:type owl:DatatypeProperty ,
+                                               owl:FunctionalProperty ;
+                                      rdfs:domain ex:contractor_work_acceptance ;
+                                      rdfs:range xsd:string ;
+                                      ex:source_mapping "原始表11 B列 主题" ;
+                                      rdfs:comment "说明验收的主要内容" ;
+                                      rdfs:label "外包任务月度验收内容" .
+
+
+###  http://datahub/cost#contractor_work_acceptance_id
+ex:contractor_work_acceptance_id rdf:type owl:DatatypeProperty ,
+                                          owl:FunctionalProperty ;
+                                 rdfs:domain ex:contractor_work_acceptance ;
+                                 rdfs:range xsd:string ;
+                                 ex:source_mapping "原始表11 A列 工程师任务验收单编码" ;
+                                 rdfs:comment "一次任务验收的ID标识" ;
+                                 rdfs:label "外包任务月度验收ID" .
+
+
+###  http://datahub/cost#contractor_work_acceptance_month
+ex:contractor_work_acceptance_month rdf:type owl:DatatypeProperty ,
+                                             owl:FunctionalProperty ;
+                                    rdfs:domain ex:contractor_work_acceptance ;
+                                    rdfs:range xsd:string ;
+                                    ex:source_mapping "原始表11 B列 E 取月份值" ;
+                                    rdfs:comment "对2025年哪个月的任务进行验收" ;
+                                    rdfs:label "验收月份" .
+
+
+###  http://datahub/cost#contractor_work_acceptance_quality
+ex:contractor_work_acceptance_quality rdf:type owl:DatatypeProperty ,
+                                               owl:FunctionalProperty ;
+                                      rdfs:domain ex:contractor_work_acceptance ;
+                                      rdfs:range xsd:decimal ;
+                                      ex:source_mapping "原始表11 R列 质量系数" ;
+                                      rdfs:comment "对任务完成质量的评价，为1时代表100%完成、0.9时代表90%完成，以此类推" ;
+                                      rdfs:label "质量系数" .
+
+
+###  http://datahub/cost#contractor_work_acceptance_total_cost
+ex:contractor_work_acceptance_total_cost rdf:type owl:DatatypeProperty ,
+                                                  owl:FunctionalProperty ;
+                                         rdfs:domain ex:contractor_work_acceptance ;
+                                         rdfs:range xsd:decimal ;
+                                         ex:source_mapping "原始表11 H列 验收总金额" ;
+                                         rdfs:comment "验收核算后的总金额，即实际在本月发生的成本，包含差旅费" ;
+                                         rdfs:label "验收总金额" .
+
+
+###  http://datahub/cost#contractor_work_acceptance_travel_cost
+ex:contractor_work_acceptance_travel_cost rdf:type owl:DatatypeProperty ,
+                                                   owl:FunctionalProperty ;
+                                          rdfs:domain ex:contractor_work_acceptance ;
+                                          rdfs:range xsd:decimal ;
+                                          ex:source_mapping "原始表11 I列 验收差旅费" ;
+                                          rdfs:comment "验收核算后的成本费用中，差旅费是多少" ;
+                                          rdfs:label "验收差旅费" .
+
+
+###  http://datahub/cost#contractor_work_cost
+ex:contractor_work_cost rdf:type owl:DatatypeProperty ,
+                                 owl:FunctionalProperty ;
+                        rdfs:domain ex:contractor_work ;
+                        rdfs:range xsd:decimal ;
+                        ex:source_mapping "找到工作对应任务的工程师单价，乘外包工作验收工时" ;
+                        rdfs:comment "外包工作经过我们验收后，经过校准后的实际成本，即需要支付给该工程师归属服务商的实际费用" ;
+                        rdfs:label "外包工作成本费用" .
+
+
+###  http://datahub/cost#contractor_work_hours_Ratio
+ex:contractor_work_hours_Ratio rdf:type owl:DatatypeProperty ,
+                                        owl:FunctionalProperty ;
+                               rdfs:domain ex:contractor_work ;
+                               rdfs:range xsd:decimal ;
+                               ex:source_mapping """\"原始表X 服务商日报-工程师日报明细
+取AO列任务书编号相同、月度归属相同的所有工作，加合工时，计算当前工作工时的占比\"""" ;
+                               rdfs:comment "该工作上报的工时，在本月、同任务产生的总工时中占比多少" ;
+                               rdfs:label "外包工时占比" .
+
+
+###  http://datahub/cost#contractor_work_hours_acceptance
+ex:contractor_work_hours_acceptance rdf:type owl:DatatypeProperty ,
+                                             owl:FunctionalProperty ;
+                                    rdfs:domain ex:contractor_work ;
+                                    rdfs:range xsd:decimal ;
+                                    ex:source_mapping """\"原始表X 服务商日报-工程师日报明细
+取任务书编号
+在原始表X 验收单中，找到对应月度的验收人天数，乘以外包工时占比\"""" ;
+                                    rdfs:comment "外包工作经过我们验收后，经过校准，可计算成本的实际工时，单位为人天" ;
+                                    rdfs:label "外包工作验收工时" .
+
+
+###  http://datahub/cost#contractor_work_hours_reported
+ex:contractor_work_hours_reported rdf:type owl:DatatypeProperty ,
+                                           owl:FunctionalProperty ;
+                                  rdfs:domain ex:contractor_work ;
+                                  rdfs:range xsd:decimal ;
+                                  ex:source_mapping "原始表X 服务商日报-工程师日报明细 D列工时（h）" ;
+                                  rdfs:comment "由外包工程师自行上报的外包工作投入工作时长， 以小时为单位" ;
+                                  rdfs:label "外包工程师上报工时" .
+
+
+###  http://datahub/cost#contractor_work_id
+ex:contractor_work_id rdf:type owl:DatatypeProperty ,
+                               owl:FunctionalProperty ;
+                      rdfs:domain ex:contractor_work ;
+                      rdfs:range xsd:string ;
+                      ex:source_mapping "原始表X 服务商日报-工程师日报明细 A列日报明细名称" ;
+                      rdfs:comment "外包工作的标识ID" ;
+                      rdfs:label "外包工作ID" .
+
+
+###  http://datahub/cost#corporate_budget_id
+ex:corporate_budget_id rdf:type owl:DatatypeProperty ,
+                                owl:FunctionalProperty ;
+                       rdfs:domain ex:corporate_budget ;
+                       rdfs:range xsd:string ;
+                       ex:examples "25T-TBG-Q4-PRO-V4.3" ;
+                       ex:source_mapping "原始表6  “预算映射ID”和\"二级预算ID”" ;
+                       rdfs:comment "公司预算的标识id，其中25TBG-SD-OPR-23为品牌市场部预算、25CLD-SD-BPO-01为产研预算" ;
+                       rdfs:label "公司预算ID" .
+
+
+###  http://datahub/cost#corporate_budget_item_description
+ex:corporate_budget_item_description rdf:type owl:DatatypeProperty ,
+                                              owl:FunctionalProperty ;
+                                     rdfs:domain ex:corporate_budget ;
+                                     rdfs:range xsd:string ;
+                                     ex:examples "驻场服务" ;
+                                     ex:source_mapping "原始表6 预算事项描述" ;
+                                     rdfs:comment "预算主要用于哪些服务事项，仅二级预算包含此字段" ;
+                                     rdfs:label "预算事项描述" .
+
+
+###  http://datahub/cost#corporate_budget_level
+ex:corporate_budget_level rdf:type owl:DatatypeProperty ,
+                                   owl:FunctionalProperty ;
+                          rdfs:domain ex:corporate_budget ;
+                          rdfs:range xsd:string ;
+                          ex:examples "二级预算" ;
+                          ex:source_mapping "原始表6  “预算映射ID”为三级预算，\"二级预算ID”为二级预算" ;
+                          rdfs:label "预算的级别，当前共有两级：二级和三级；一个二级预算下包含多个三级预算" ,
+                                     "预算级别" .
+
+
+###  http://datahub/cost#corporate_budget_subject
+ex:corporate_budget_subject rdf:type owl:DatatypeProperty ,
+                                     owl:FunctionalProperty ;
+                            rdfs:domain ex:corporate_budget ;
+                            rdfs:range xsd:string ;
+                            ex:examples "驻场服务" ;
+                            ex:source_mapping "原始表6 预算科目" ;
+                            rdfs:comment "预算的作用，仅二级预算包含此字段" ;
+                            rdfs:label "预算科目" .
+
+
+###  http://datahub/cost#customer_field
+ex:customer_field rdf:type owl:DatatypeProperty ,
+                           owl:FunctionalProperty ;
+                  rdfs:domain ex:customer ;
+                  rdfs:range xsd:string ;
+                  ex:source_mapping "原始表PMS X列客户行业类型，任取一行非空白即可" ;
+                  rdfs:comment "客户所在的具体行业，是比较细致的分类" ;
+                  rdfs:label "所属行业" .
+
+
+###  http://datahub/cost#customer_fieldtype
+ex:customer_fieldtype rdf:type owl:DatatypeProperty ,
+                               owl:FunctionalProperty ;
+                      rdfs:domain ex:customer ;
+                      rdfs:range xsd:string ;
+                      ex:examples "国企行业" ;
+                      ex:source_mapping "原始表PMS  Y列行业推广类，任取一行即可" ;
+                      rdfs:comment "客户所在的行业类型，是较为宽泛的分类，主要分为党政军、国企、教育、金融、民企、医疗" ;
+                      rdfs:label "所属行业类型" .
+
+
+###  http://datahub/cost#customer_id
+ex:customer_id rdf:type owl:DatatypeProperty ,
+                        owl:FunctionalProperty ;
+               rdfs:domain ex:customer ;
+               rdfs:range xsd:string ;
+               ex:source_mapping "原始表PMS  G列客户编号" ;
+               rdfs:comment "客户的标识ID" ;
+               rdfs:label "客户ID" .
+
+
+###  http://datahub/cost#customer_name
+ex:customer_name rdf:type owl:DatatypeProperty ,
+                          owl:FunctionalProperty ;
+                 rdfs:domain ex:customer ;
+                 rdfs:range xsd:string ;
+                 ex:examples "北京中核华辉科技发展有限公司" ;
+                 ex:source_mapping "原始表PMS  D列客户全程（CRM），任取一行即可" ;
+                 rdfs:comment "客户的官方名称" ;
+                 rdfs:label "客户名称" .
+
+
+###  http://datahub/cost#customer_sale
+ex:customer_sale rdf:type owl:DatatypeProperty ,
+                          owl:FunctionalProperty ;
+                 rdfs:domain ex:customer ;
+                 rdfs:range xsd:string ;
+                 ex:examples "罗幽兰" ;
+                 ex:source_mapping "原始表PMS AG列客户所有人" ;
+                 rdfs:comment "负责该客户的销售" ;
+                 rdfs:label "销售所有人" .
+
+
+###  http://datahub/cost#customer_type
+ex:customer_type rdf:type owl:DatatypeProperty ,
+                          owl:FunctionalProperty ;
+                 rdfs:domain ex:customer ;
+                 rdfs:range xsd:string ;
+                 ex:source_mapping "原始表PMS  F列客户类型，任取一行即可" ;
+                 rdfs:comment "用于区分客户的属性，如是企业还是党政机关" ;
+                 rdfs:label "客户类型" .
+
+
+###  http://datahub/cost#delivery_manager
+ex:delivery_manager rdf:type owl:DatatypeProperty ,
+                             owl:FunctionalProperty ;
+                    rdfs:domain ex:service ;
+                    rdfs:range xsd:string ;
+                    ex:examples "周云1" ;
+                    ex:source_mapping "原始表6 交付经理" ;
+                    rdfs:comment "负责为此次服务联系外部服务商、审核服务合规性的负责人" ;
+                    rdfs:label "交付经理" .
+
+
+###  http://datahub/cost#delivery_method
+ex:delivery_method rdf:type owl:DatatypeProperty ,
+                            owl:FunctionalProperty ;
+                   rdfs:domain ex:service ;
+                   rdfs:range xsd:string ;
+                   ex:examples "远程" ;
+                   ex:source_mapping "原始表6 交付方式" ;
+                   rdfs:comment "需要现场支持还是远程支持" ;
+                   rdfs:label "交付方式" .
+
+
+###  http://datahub/cost#dept_id
+ex:dept_id rdf:type owl:DatatypeProperty ,
+                    owl:FunctionalProperty ;
+           rdfs:domain ex:department ;
+           rdfs:range xsd:string ;
+           ex:source_mapping "自生成" ;
+           rdfs:comment "部门的标识id；" ;
+           rdfs:label "部门ID" .
+
+
+###  http://datahub/cost#dept_level
+ex:dept_level rdf:type owl:DatatypeProperty ,
+                       owl:FunctionalProperty ;
+              rdfs:domain ex:department ;
+              rdfs:range xsd:string ;
+              ex:examples "四级" ;
+              ex:source_mapping "原始表X 部门 第一行" ;
+              rdfs:comment "部门的级别，从一级开始，可能是多级，层级不限" ;
+              rdfs:label "部门级别" .
+
+
+###  http://datahub/cost#dept_name
+ex:dept_name rdf:type owl:DatatypeProperty ;
+             rdfs:domain ex:department ;
+             rdfs:range xsd:string ;
+             ex:examples "大客特种" ;
+             ex:source_mapping "原始表X 部门 第一行除外" ;
+             rdfs:comment "公司内部门的名称，可以用XX/YY/MM表示，含义为最后一级部门，但同时展示其上级部门" ;
+             rdfs:label "部门名称" .
+
+
+###  http://datahub/cost#employee_work_editor
+ex:employee_work_editor rdf:type owl:DatatypeProperty ,
+                                 owl:FunctionalProperty ;
+                        rdfs:domain ex:employee_work ;
+                        rdfs:range xsd:string ;
+                        ex:source_mapping "原始表X日报明细-日报明细 B列日报填写人" ;
+                        rdfs:comment "哪个正编员工投入了项目工作" ;
+                        rdfs:label "正编工作所属人" .
+
+
+###  http://datahub/cost#employee_work_hours
+ex:employee_work_hours rdf:type owl:DatatypeProperty ,
+                                owl:FunctionalProperty ;
+                       rdfs:domain ex:employee_work ;
+                       rdfs:range xsd:decimal ;
+                       ex:source_mapping "原始表X日报明细-日报明细 D列工作量（小时）" ;
+                       rdfs:comment "正编工作的实际工时，以小时为单位" ;
+                       rdfs:label "正编工作量" .
+
+
+###  http://datahub/cost#employee_work_id
+ex:employee_work_id rdf:type owl:DatatypeProperty ,
+                             owl:FunctionalProperty ;
+                    rdfs:domain ex:employee_work ;
+                    rdfs:range xsd:string ;
+                    ex:source_mapping "原始表X日报明细-日报明细 A列编号" ;
+                    rdfs:comment "正编工作的标识ID" ;
+                    rdfs:label "正编工作ID" .
+
+
+###  http://datahub/cost#employee_work_method
+ex:employee_work_method rdf:type owl:DatatypeProperty ,
+                                 owl:FunctionalProperty ;
+                        rdfs:domain ex:employee_work ;
+                        rdfs:range xsd:string ;
+                        ex:source_mapping "原始表X日报明细-日报明细 K列工作方式" ;
+                        rdfs:comment """\"正编工作是否要到现场，枚举包括
+-办公地
+-出差
+-居家办公
+-市内外出\"""" ;
+                        rdfs:label "正编工作方式" .
+
+
+###  http://datahub/cost#employee_work_stage
+ex:employee_work_stage rdf:type owl:DatatypeProperty ,
+                                owl:FunctionalProperty ;
+                       rdfs:domain ex:employee_work ;
+                       rdfs:range xsd:string ;
+                       ex:source_mapping "原始表X日报明细-日报明细 R列项目全周期阶段" ;
+                       rdfs:comment """\"工作发生时项目所处的阶段，按照项目的发展顺序，枚举如下
+-需求交流
+-方案确认
+-推动签约
+-投产阶段
+-推广验收
+-运维阶段\"""" ;
+                       rdfs:label "正编工作所属项目阶段" .
+
+
+###  http://datahub/cost#employee_work_time
+ex:employee_work_time rdf:type owl:DatatypeProperty ,
+                               owl:FunctionalProperty ;
+                      rdfs:domain ex:employee_work ;
+                      rdfs:range xsd:date ;
+                      ex:source_mapping "原始表X日报明细-日报明细 C列日报日期" ;
+                      rdfs:comment "正编工作发生的日期" ;
+                      rdfs:label "正编工作发生时间" .
+
+
+###  http://datahub/cost#employee_work_type
+ex:employee_work_type rdf:type owl:DatatypeProperty ,
+                               owl:FunctionalProperty ;
+                      rdfs:domain ex:employee_work ;
+                      rdfs:range xsd:string ;
+                      ex:source_mapping "原始表X日报明细-日报明细 K列工作方式" ;
+                      rdfs:comment "用于将不同正编工作内容分类" ;
+                      rdfs:label "正编工作类型" .
+
+
+###  http://datahub/cost#estimated_end_time
+ex:estimated_end_time rdf:type owl:DatatypeProperty ,
+                               owl:FunctionalProperty ;
+                      rdfs:domain ex:service ;
+                      rdfs:range xsd:date ;
+                      ex:examples "2025-10-24" ;
+                      ex:source_mapping "原始表6 预估结束时间" ;
+                      rdfs:comment "服务预计结束的时间" ;
+                      rdfs:label "预估结束时间" .
+
+
+###  http://datahub/cost#estimated_start_time
+ex:estimated_start_time rdf:type owl:DatatypeProperty ,
+                                 owl:FunctionalProperty ;
+                        rdfs:domain ex:service ;
+                        rdfs:range xsd:date ;
+                        ex:examples "2025-09-08" ;
+                        ex:source_mapping "原始表6 预估开始时间" ;
+                        rdfs:comment "服务预计开始的时间" ;
+                        rdfs:label "预估开始时间" .
+
+
+###  http://datahub/cost#is_standard_price
+ex:is_standard_price rdf:type owl:DatatypeProperty ,
+                              owl:FunctionalProperty ;
+                     rdfs:domain ex:service ;
+                     rdfs:range xsd:string ;
+                     ex:source_mapping "原始表6 是否标准价格" ;
+                     rdfs:comment "服务是否为已定义好的标准服务，并采用标准报价，还是需要另外评估" ;
+                     rdfs:label "是否标准价格" .
+
+
+###  http://datahub/cost#maintenance_period
+ex:maintenance_period rdf:type owl:DatatypeProperty ,
+                               owl:FunctionalProperty ;
+                      rdfs:domain ex:service ;
+                      rdfs:range xsd:integer ;
+                      ex:examples "12" ;
+                      ex:source_mapping "原始表6 维保期" ;
+                      rdfs:comment "服务结束后，服务商还需要继续提供维保的月数" ;
+                      rdfs:label "维保期" .
+
+
+###  http://datahub/cost#opportunity_details
+ex:opportunity_details rdf:type owl:DatatypeProperty ,
+                                owl:FunctionalProperty ;
+                       rdfs:domain ex:opportunity ;
+                       rdfs:range xsd:string ;
+                       ex:examples "华辉协作项目_WPS 365专业办公高级平台V7" ;
+                       ex:source_mapping "原始表4 商机明细" ;
+                       rdfs:comment "商机的详细内容" ;
+                       rdfs:label "商机明细" .
+
+
+###  http://datahub/cost#opportunity_id
+ex:opportunity_id rdf:type owl:DatatypeProperty ,
+                           owl:FunctionalProperty ;
+                  rdfs:domain ex:opportunity ;
+                  rdfs:range xsd:string ;
+                  ex:examples "PR-00167290" ;
+                  ex:source_mapping "原始表4 商机号" ;
+                  rdfs:comment "商机的标识id" ;
+                  rdfs:label "商机ID" .
+
+
+###  http://datahub/cost#order_id
+ex:order_id rdf:type owl:DatatypeProperty ,
+                     owl:FunctionalProperty ;
+            rdfs:domain ex:order ;
+            rdfs:range xsd:string ;
+            ex:examples "S00540771" ;
+            ex:source_mapping "原始表4 订单号" ;
+            rdfs:comment "订单的标识id；" ;
+            rdfs:label "订单ID" .
+
+
+###  http://datahub/cost#person_in_charge_from_company
+ex:person_in_charge_from_company rdf:type owl:DatatypeProperty ,
+                                          owl:FunctionalProperty ;
+                                 rdfs:domain ex:service ;
+                                 rdfs:range xsd:string ;
+                                 ex:source_mapping """\"服务为“公司承担时”
+原始表6 服务申请
+J列 项目负责人
+\"""" ;
+                                 rdfs:comment "服务费用由公司承担时，公司内的负责人是谁" ;
+                                 rdfs:label "公司承担负责人" .
+
+
+###  http://datahub/cost#pj_feature
+ex:pj_feature rdf:type owl:DatatypeProperty ;
+              rdfs:domain ex:project ;
+              rdfs:range xsd:string ;
+              ex:source_mapping "原始表PMS R列项目特征" ;
+              rdfs:comment "说明项目切入点，主要为解决客户什么问题；一个项目可能有多个特征" ;
+              rdfs:label "项目特征" .
+
+
+###  http://datahub/cost#pj_leader
+ex:pj_leader rdf:type owl:DatatypeProperty ,
+                      owl:FunctionalProperty ;
+             rdfs:domain ex:project ;
+             rdfs:range xsd:string ;
+             ex:examples "权广政" ;
+             ex:source_mapping "原始表PMS 当前负责人" ;
+             rdfs:comment "项目当前阶段的主要负责人、汇报人" ;
+             rdfs:label "项目负责人" .
+
+
+###  http://datahub/cost#pj_level
+ex:pj_level rdf:type owl:DatatypeProperty ,
+                     owl:FunctionalProperty ;
+            rdfs:domain ex:project ;
+            rdfs:range xsd:string ;
+            ex:source_mapping "原始表PMS G列项目类型" ;
+            rdfs:comment "项目的重要程度" ;
+            rdfs:label "项目级别" .
+
+
+###  http://datahub/cost#pj_manager
+ex:pj_manager rdf:type owl:DatatypeProperty ,
+                       owl:FunctionalProperty ;
+              rdfs:domain ex:project ;
+              rdfs:range xsd:string ;
+              ex:source_mapping "原始表PMS G列项目类型" ;
+              rdfs:comment "负责项目交付、推广的负责人" ;
+              rdfs:label "项目经理" .
+
+
+###  http://datahub/cost#pj_presale
+ex:pj_presale rdf:type owl:DatatypeProperty ,
+                       owl:FunctionalProperty ;
+              rdfs:domain ex:project ;
+              rdfs:range xsd:string ;
+              ex:source_mapping "原始表PMS 售前经理" ;
+              rdfs:comment "负责项目售前沟通、方案设计的负责人" ;
+              rdfs:label "售前经理" .
+
+
+###  http://datahub/cost#pj_sign
+ex:pj_sign rdf:type owl:DatatypeProperty ,
+                    owl:FunctionalProperty ;
+           rdfs:domain ex:project ;
+           rdfs:range xsd:string ;
+           ex:source_mapping "原始表PMS AM列是否签单" ;
+           rdfs:comment """\"项目是否已经签单，可能包括
+-是：已经和客户正式签单
+-否：还没有正式签单
+-赠送：免费赠送给客户使用，无需签单\"""" ;
+           rdfs:label "签约状态" .
+
+
+###  http://datahub/cost#pj_starttime
+ex:pj_starttime rdf:type owl:DatatypeProperty ,
+                         owl:FunctionalProperty ;
+                rdfs:domain ex:project ;
+                rdfs:range xsd:date ;
+                ex:source_mapping "原始表PMS O列立项日期" ;
+                rdfs:comment "项目正式立项的时间" ;
+                rdfs:label "立项日期" .
+
+
+###  http://datahub/cost#pj_tag
+ex:pj_tag rdf:type owl:DatatypeProperty ,
+                   owl:FunctionalProperty ;
+          rdfs:domain ex:project ;
+          rdfs:range xsd:string ;
+          ex:source_mapping """\"原始表PMS S列自定义标签
+\"""" ;
+          rdfs:comment "从项目管理角度打的标签，主要可用来区分是为S15重点关注项目" ;
+          rdfs:label "项目标签" .
+
+
+###  http://datahub/cost#pj_trace
+ex:pj_trace rdf:type owl:DatatypeProperty ,
+                     owl:FunctionalProperty ;
+            rdfs:domain ex:project ;
+            rdfs:range xsd:string ;
+            ex:source_mapping "原始表PMS  K列项目全周期阶段" ;
+            rdfs:comment "项目当前的推进阶段" ;
+            rdfs:label "项目阶段" .
+
+
+###  http://datahub/cost#pj_type
+ex:pj_type rdf:type owl:DatatypeProperty ,
+                    owl:FunctionalProperty ;
+           rdfs:domain ex:project ;
+           rdfs:range xsd:string ;
+           ex:source_mapping "原始表PMS G列项目类型" ;
+           rdfs:comment "用来区分项目是公网、私网还是生态伙伴项目" ;
+           rdfs:label "项目类型" .
+
+
+###  http://datahub/cost#produce_line_name
+ex:produce_line_name rdf:type owl:DatatypeProperty ,
+                              owl:FunctionalProperty ;
+                     rdfs:domain ex:produce_line ;
+                     rdfs:range xsd:string ;
+                     ex:source_mapping "原始表X 日报明细-日报明细 产品条线" ;
+                     rdfs:comment "产品条线的名称" ;
+                     rdfs:label "产品条线名称" .
+
+
+###  http://datahub/cost#product_category_id
+ex:product_category_id rdf:type owl:DatatypeProperty ,
+                                owl:FunctionalProperty ;
+                       rdfs:domain ex:product_catelogy ;
+                       rdfs:range xsd:string ;
+                       ex:source_mapping "自生成" ;
+                       rdfs:comment "产品类别的标识id；我们售卖的软件产品分类" ;
+                       rdfs:label "产品类别ID" .
+
+
+###  http://datahub/cost#product_category_name
+ex:product_category_name rdf:type owl:DatatypeProperty ,
+                                  owl:FunctionalProperty ;
+                         rdfs:domain ex:product_catelogy ;
+                         rdfs:range xsd:string ;
+                         ex:examples "公有云" ;
+                         ex:source_mapping "原始表4 成本产品线" ;
+                         rdfs:comment "产品类别的名称" ;
+                         rdfs:label "产品类别名称" .
+
+
+###  http://datahub/cost#product_id
+ex:product_id rdf:type owl:DatatypeProperty ,
+                       owl:FunctionalProperty ;
+              rdfs:domain ex:product ;
+              rdfs:range xsd:string ;
+              ex:source_mapping "自生成" ;
+              rdfs:comment "产品的标识id，即我们向客户售卖的软件产品" ;
+              rdfs:label "产品ID" .
+
+
+###  http://datahub/cost#product_name
+ex:product_name rdf:type owl:DatatypeProperty ,
+                         owl:FunctionalProperty ;
+                rdfs:domain ex:product ;
+                rdfs:range xsd:string ;
+                ex:examples "WPS 365教育高级版" ;
+                ex:source_mapping "原始表4 产品名称" ;
+                rdfs:comment "约定好的产品名称" ;
+                rdfs:label "产品名称" .
+
+
+###  http://datahub/cost#project_budget_amount
+ex:project_budget_amount rdf:type owl:DatatypeProperty ,
+                                  owl:FunctionalProperty ;
+                         rdfs:domain ex:project_budget ;
+                         rdfs:range xsd:decimal ;
+                         ex:examples "272950" ;
+                         ex:source_mapping "原始表4 预算金额" ;
+                         rdfs:comment "预算中包含的总金额" ;
+                         rdfs:label "预算金额" .
+
+
+###  http://datahub/cost#project_budget_dependency_type
+ex:project_budget_dependency_type rdf:type owl:DatatypeProperty ,
+                                           owl:FunctionalProperty ;
+                                  rdfs:domain ex:project_budget ;
+                                  rdfs:range xsd:string ;
+                                  ex:examples "关联商机" ;
+                                  ex:source_mapping "原始表4 \"订单号若有值，则为“关联订单”，否则为“关联商机”" ;
+                                  rdfs:comment "依赖订单还是商机" ;
+                                  rdfs:label "预算依赖类型" .
+
+
+###  http://datahub/cost#project_budget_id
+ex:project_budget_id rdf:type owl:DatatypeProperty ,
+                              owl:FunctionalProperty ;
+                     rdfs:domain ex:project_budget ;
+                     rdfs:range xsd:string ;
+                     ex:examples "PBD＃20250100035" ;
+                     ex:source_mapping "原始表4 项目预算明细编号" ;
+                     rdfs:comment "项目预算的标识id；" ;
+                     rdfs:label "项目预算ID" .
+
+
+###  http://datahub/cost#project_id
+ex:project_id rdf:type owl:DatatypeProperty ,
+                       owl:FunctionalProperty ;
+              rdfs:domain ex:project ;
+              rdfs:range xsd:string ;
+              ex:examples "PJ-25010034" ;
+              ex:source_mapping "原始表PMS A列项目编号" ;
+              rdfs:comment "项目的标识ID" ;
+              rdfs:label "项目ID" .
+
+
+###  http://datahub/cost#project_name
+ex:project_name rdf:type owl:DatatypeProperty ;
+                rdfs:domain ex:project ;
+                rdfs:range xsd:string ;
+                ex:examples "2025中核华辉金山协作项目" ;
+                ex:source_mapping "原始表PMS B列项目名称" ;
+                rdfs:comment "项目的官方名称" ;
+                rdfs:label "项目名称" .
+
+
+###  http://datahub/cost#project_remaining_occupiable_amount
+ex:project_remaining_occupiable_amount rdf:type owl:DatatypeProperty ,
+                                                owl:FunctionalProperty ;
+                                       rdfs:domain ex:project_budget ;
+                                       rdfs:range xsd:decimal ;
+                                       ex:examples "85550" ;
+                                       ex:source_mapping "预算金额减去预算相关的服务预估费用" ;
+                                       rdfs:comment "即剩余可被别的服务申请的金额，算法为预算金额减去预算相关的服务预估费用" ;
+                                       rdfs:label "剩余可占用金额" .
+
+
+###  http://datahub/cost#project_remaining_usable_amount
+ex:project_remaining_usable_amount rdf:type owl:DatatypeProperty ,
+                                            owl:FunctionalProperty ;
+                                   rdfs:domain ex:project_budget ;
+                                   rdfs:range xsd:decimal ;
+                                   ex:examples "85550" ;
+                                   ex:source_mapping "预算金额减去预算相关的任务金额" ;
+                                   rdfs:comment "即预算中扣除已经实际花掉的金额，算法为预算金额减去预算相关的服务相关的任务金额" ;
+                                   rdfs:label "剩余可使用金额" .
+
+
+###  http://datahub/cost#service_address
+ex:service_address rdf:type owl:DatatypeProperty ,
+                            owl:FunctionalProperty ;
+                   rdfs:domain ex:service ;
+                   rdfs:range xsd:string ;
+                   ex:examples "北京市海淀区科原大厦B座" ;
+                   ex:source_mapping "原始表6 详细地址" ;
+                   rdfs:comment "服务的项目所在地" ;
+                   rdfs:label "服务详细地址" .
+
+
+###  http://datahub/cost#service_category_id
+ex:service_category_id rdf:type owl:DatatypeProperty ,
+                                owl:FunctionalProperty ;
+                       rdfs:domain ex:service_catalogy ;
+                       rdfs:range xsd:string ;
+                       ex:source_mapping "自生成" ;
+                       rdfs:comment "服务类目的标识id；" ;
+                       rdfs:label "服务类目ID" .
+
+
+###  http://datahub/cost#service_category_name
+ex:service_category_name rdf:type owl:DatatypeProperty ,
+                                  owl:FunctionalProperty ;
+                         rdfs:domain ex:service_catalogy ;
+                         rdfs:range xsd:string ;
+                         ex:examples "私有云产品定制开发" ;
+                         ex:source_mapping "原始表6 服务类目" ;
+                         rdfs:comment "服务类目的名称，对服务内容进行分类，向外部服务商声明" ;
+                         rdfs:label "服务类目名称" .
+
+
+###  http://datahub/cost#service_city
+ex:service_city rdf:type owl:DatatypeProperty ,
+                         owl:FunctionalProperty ;
+                rdfs:domain ex:service ;
+                rdfs:range xsd:string ;
+                ex:examples "北京市" ;
+                ex:source_mapping "原始表6 城市" ;
+                rdfs:comment "服务的项目所在城市" ;
+                rdfs:label "服务所在城市" .
+
+
+###  http://datahub/cost#service_content
+ex:service_content rdf:type owl:DatatypeProperty ,
+                            owl:FunctionalProperty ;
+                   rdfs:domain ex:service ;
+                   rdfs:range xsd:string ;
+                   ex:examples """1.负责双因子认证方式的定开、测试、部署和运维工作；
+2.认证方式包括账密、短信、旧设备扫码和同事辅助认证；
+3.负责开发实现常用设备管理能力及相关交互界面的开发。""" ;
+                   ex:source_mapping "原始表6 服务内容" ;
+                   rdfs:comment "服务的具体内容，描述" ;
+                   rdfs:label "服务内容" .
+
+
+###  http://datahub/cost#service_cost_source
+ex:service_cost_source rdf:type owl:DatatypeProperty ,
+                                owl:FunctionalProperty ;
+                       rdfs:domain ex:service ;
+                       rdfs:range xsd:string ;
+                       ex:examples "销售承担" ;
+                       ex:source_mapping "原始表6 F列预算映射ID，结尾为1.X、2.X为公司承担；结尾为3.X、4.X为销售承担" ;
+                       rdfs:comment "服务的费用是销售承担还是公司承担" ;
+                       rdfs:label "费用来源" .
+
+
+###  http://datahub/cost#service_create_time
+ex:service_create_time rdf:type owl:DatatypeProperty ,
+                                owl:FunctionalProperty ;
+                       rdfs:domain ex:service ;
+                       rdfs:range xsd:dateTime ;
+                       ex:examples "2025-09-26 11:23" ;
+                       ex:source_mapping "原始表6 创建日期" ;
+                       rdfs:comment "发起此次服务申请的时间" ;
+                       rdfs:label "服务单创建时间" .
+
+
+###  http://datahub/cost#service_customer_type
+ex:service_customer_type rdf:type owl:DatatypeProperty ,
+                                  owl:FunctionalProperty ;
+                         rdfs:domain ex:service ;
+                         rdfs:range xsd:string ;
+                         ex:source_mapping "原始表6 AD列 服务类型 并将“单客户驻场服务”映射为“单客户服务”，“多客户远程服务”映射为“多客户服务”" ;
+                         rdfs:comment "用于说明服务单客户还是多客户" ;
+                         rdfs:label "服务客户数量" .
+
+
+###  http://datahub/cost#service_estimated_cost
+ex:service_estimated_cost rdf:type owl:DatatypeProperty ,
+                                   owl:FunctionalProperty ;
+                          rdfs:domain ex:service ;
+                          rdfs:range xsd:decimal ;
+                          ex:examples "187400" ;
+                          ex:source_mapping "原始表6 项目预估总费用" ;
+                          rdfs:comment "服务预计会发生的费用，即预估服务完成后，需要付给服务商的钱；预估费用并没有实际发生，不应作为实际成本作为计算；一个项目预算下的所有服务预估费用总和，不应超过项目预算的金额" ;
+                          rdfs:label "服务预估费用" .
+
+
+###  http://datahub/cost#service_id
+ex:service_id rdf:type owl:DatatypeProperty ,
+                       owl:FunctionalProperty ;
+              rdfs:domain ex:service ;
+              rdfs:range xsd:string ;
+              ex:examples "PR-20250926-0005" ;
+              ex:source_mapping "原始表6 服务申请编号" ;
+              rdfs:comment "外包服务的标识id" ;
+              rdfs:label "服务申请ID" .
+
+
+###  http://datahub/cost#service_initiator
+ex:service_initiator rdf:type owl:DatatypeProperty ,
+                              owl:FunctionalProperty ;
+                     rdfs:domain ex:service ;
+                     rdfs:range xsd:string ;
+                     ex:examples "权广政" ;
+                     ex:source_mapping "原始表6 提单人" ;
+                     rdfs:comment "申请此次服务的人员" ;
+                     rdfs:label "服务发起人" .
+
+
+###  http://datahub/cost#service_initiator_dept
+ex:service_initiator_dept rdf:type owl:DatatypeProperty ,
+                                   owl:FunctionalProperty ;
+                          rdfs:domain ex:service ;
+                          rdfs:range xsd:string ;
+                          ex:examples "大客特种客成组" ;
+                          ex:source_mapping "原始表6 提单人部门" ;
+                          rdfs:comment "申请此次服务的人员所在部门" ;
+                          rdfs:label "服务发起人所在部门" .
+
+
+###  http://datahub/cost#service_mode
+ex:service_mode rdf:type owl:DatatypeProperty ,
+                         owl:FunctionalProperty ;
+                rdfs:domain ex:service ;
+                rdfs:range xsd:string ;
+                ex:examples "项目整包" ;
+                ex:source_mapping "原始表6 服务模式" ;
+                rdfs:comment "可能是“项目整包”或“人员外包”，项目整包即通过此次服务为单个项目解决某个明确需求；人员外包即通过此次服务为单个或多个项目提供技术人员驻场，解决一系列问题" ;
+                rdfs:label "服务模式" .
+
+
+###  http://datahub/cost#service_provider
+ex:service_provider rdf:type owl:DatatypeProperty ,
+                             owl:FunctionalProperty ;
+                    rdfs:domain ex:task ;
+                    rdfs:range xsd:string ;
+                    ex:examples "武汉上云爱办公数字科技有限公司" ;
+                    ex:source_mapping "原始表3 承接服务商、原始表5 服务商" ;
+                    rdfs:comment "承接该任务的服务商" ;
+                    rdfs:label "承接服务商" .
+
+
+###  http://datahub/cost#service_province
+ex:service_province rdf:type owl:DatatypeProperty ,
+                             owl:FunctionalProperty ;
+                    rdfs:domain ex:service ;
+                    rdfs:range xsd:string ;
+                    ex:examples "北京市" ;
+                    ex:source_mapping "原始表6 省份" ;
+                    rdfs:comment "服务的项目所在省份" ;
+                    rdfs:label "服务所在省份" .
+
+
+###  http://datahub/cost#service_stage_status
+ex:service_stage_status rdf:type owl:DatatypeProperty ,
+                                 owl:FunctionalProperty ;
+                        rdfs:domain ex:service ;
+                        rdfs:range xsd:string ;
+                        ex:examples "交付阶段" ;
+                        ex:source_mapping "原始表6 阶段状态" ;
+                        rdfs:comment "说明服务进行到了哪个阶段" ;
+                        rdfs:label "服务阶段状态" .
+
+
+###  http://datahub/cost#service_tags
+ex:service_tags rdf:type owl:DatatypeProperty ,
+                         owl:FunctionalProperty ;
+                rdfs:domain ex:service ;
+                rdfs:range xsd:string ;
+                ex:examples "私有云产品定制开发" ;
+                ex:source_mapping "原始表6 标签" ;
+                rdfs:comment "对某些特别关注的服务内容，以标签的方式区分出来" ;
+                rdfs:label "服务标签" .
+
+
+###  http://datahub/cost#service_theme
+ex:service_theme rdf:type owl:DatatypeProperty ,
+                          owl:FunctionalProperty ;
+                 rdfs:domain ex:service ;
+                 rdfs:range xsd:string ;
+                 ex:examples "中核华辉协作项目双因子认证二开服务单申请" ;
+                 ex:source_mapping "原始表6 服务申请主题" ;
+                 rdfs:comment "外包服务的主要内容描述" ;
+                 rdfs:label "服务申请主题" .
+
+
+###  http://datahub/cost#service_type_id
+ex:service_type_id rdf:type owl:DatatypeProperty ,
+                            owl:FunctionalProperty ;
+                   rdfs:domain ex:service_type ;
+                   rdfs:range xsd:string ;
+                   ex:source_mapping "自生成" ;
+                   rdfs:comment "服务类型的标识id；" ;
+                   rdfs:label "服务类型ID" .
+
+
+###  http://datahub/cost#service_type_level
+ex:service_type_level rdf:type owl:DatatypeProperty ,
+                               owl:FunctionalProperty ;
+                      rdfs:domain ex:service_type ;
+                      rdfs:range xsd:string ;
+                      ex:examples "二级" ;
+                      ex:source_mapping "原始表X 服务类型" ;
+                      rdfs:comment "服务类型的级别，当前共有两级：一级和二级；一级服务类型包含多个二级服务类型" ;
+                      rdfs:label "服务类型级别" .
+
+
+###  http://datahub/cost#service_type_name
+ex:service_type_name rdf:type owl:DatatypeProperty ,
+                              owl:FunctionalProperty ;
+                     rdfs:domain ex:service_type ;
+                     rdfs:range xsd:string ;
+                     ex:examples "标准账号对接" ;
+                     ex:source_mapping "原始表X 服务类型" ;
+                     rdfs:comment "服务类型的名称，用于公司内部的统计" ;
+                     rdfs:label "服务类型名称" .
+
+
+###  http://datahub/cost#service_used_amount
+ex:service_used_amount rdf:type owl:DatatypeProperty ,
+                                owl:FunctionalProperty ;
+                       rdfs:domain ex:service ;
+                       rdfs:range xsd:decimal ;
+                       ex:examples "1138590" ;
+                       ex:source_mapping "原始表6 服务申请已使用金额" ;
+                       rdfs:comment "基于这个服务已经发起1个或多个任务，所有任务的总金额即为服务的已使用金额" ;
+                       rdfs:label "服务已使用金额" .
+
+
+###  http://datahub/cost#settlement_terms
+ex:settlement_terms rdf:type owl:DatatypeProperty ,
+                             owl:FunctionalProperty ;
+                    rdfs:domain ex:service ;
+                    rdfs:range xsd:string ;
+                    ex:examples """阶段性验收结算：
+初验：项目成果交付物+交付内部验收单 20.0%
+终验：客户回执单/邮件 75.0%
+维保：维保内部验收单 5.0%""" ;
+                    ex:source_mapping "原始表6 结算条款" ;
+                    rdfs:comment "服务最终结算时的规则" ;
+                    rdfs:label "结算条款" .
+
+
+###  http://datahub/cost#task_Engineer__Level
+ex:task_Engineer__Level rdf:type owl:DatatypeProperty ,
+                                 owl:FunctionalProperty ;
+                        rdfs:domain ex:task ;
+                        rdfs:range xsd:string ;
+                        ex:source_mapping "原始表5 签约状态 W列岗位级别" ;
+                        rdfs:comment "仅人员外包的任务涉及，指派发的外包工程师岗位级别" ;
+                        rdfs:label "任务工程师岗位级别" .
+
+
+###  http://datahub/cost#task_Engineer_name
+ex:task_Engineer_name rdf:type owl:DatatypeProperty ,
+                               owl:FunctionalProperty ;
+                      rdfs:domain ex:task ;
+                      rdfs:range xsd:string ;
+                      ex:source_mapping "原始表5 签约状态 U列工程师姓名" ;
+                      rdfs:comment "仅人员外包的任务涉及，指派发给哪位外包工程师，一个任务仅针对一位工程师" ;
+                      rdfs:label "任务工程师姓名" .
+
+
+###  http://datahub/cost#task_Engineer_title
+ex:task_Engineer_title rdf:type owl:DatatypeProperty ,
+                                owl:FunctionalProperty ;
+                       rdfs:domain ex:task ;
+                       rdfs:range xsd:string ;
+                       ex:source_mapping "原始表5 签约状态 V列岗位名称" ;
+                       rdfs:comment "仅人员外包的任务涉及，指派发的外包工程师岗位名称" ;
+                       rdfs:label "任务工程师岗位名称" .
+
+
+###  http://datahub/cost#task_amount
+ex:task_amount rdf:type owl:DatatypeProperty ,
+                        owl:FunctionalProperty ;
+               rdfs:domain ex:task ;
+               rdfs:range xsd:decimal ;
+               ex:examples "187400" ;
+               ex:source_mapping "原始表3 项目金额（BI用）、 原始表5 N列服务总金额（0609）" ;
+               rdfs:comment """\"对于整包任务，即为任务实际花费的金额，差旅费用已计算在内，只有该金额才实际发生了，可作为整包服务的成本计算；
+对于人员外包任务，该项仅为预估的成本，包含预估的工程师总价与差旅费用，实际发生的成本需要按照任务每个月对应的任务验收金额去计算\"""" ;
+               rdfs:label "任务金额" .
+
+
+###  http://datahub/cost#task_approval_status
+ex:task_approval_status rdf:type owl:DatatypeProperty ,
+                                 owl:FunctionalProperty ;
+                        rdfs:domain ex:task ;
+                        rdfs:range xsd:string ;
+                        ex:examples "审批中" ;
+                        ex:source_mapping "原始表3、原始表5 审批状态" ;
+                        rdfs:comment "任务是否在公司内审批通过，审批通过后才可与服务商正式签约，计算某个周期或维度的服务费用时，不用考虑任务的审批状态" ;
+                        rdfs:label "任务审批状态" .
+
+
+###  http://datahub/cost#task_create_time
+ex:task_create_time rdf:type owl:DatatypeProperty ,
+                             owl:FunctionalProperty ;
+                    rdfs:domain ex:task ;
+                    rdfs:range xsd:dateTime ;
+                    ex:examples "2025-10-19 16:46" ;
+                    ex:source_mapping "原始表3、原始表5 创建日期" ;
+                    rdfs:comment "创建任务的时间" ;
+                    rdfs:label "任务创建时间" .
+
+
+###  http://datahub/cost#task_creator
+ex:task_creator rdf:type owl:DatatypeProperty ,
+                         owl:FunctionalProperty ;
+                rdfs:domain ex:task ;
+                rdfs:range xsd:string ;
+                ex:examples "周云1" ;
+                ex:source_mapping "原始表3 创建人、原始表5 修改人" ;
+                rdfs:comment "创建任务的发起人" ;
+                rdfs:label "任务创建人" .
+
+
+###  http://datahub/cost#task_date
+ex:task_date rdf:type owl:DatatypeProperty ,
+                      owl:FunctionalProperty ;
+             rdfs:domain ex:task ;
+             rdfs:range xsd:date ;
+             ex:examples "2025-10-19" ;
+             ex:source_mapping "原始表3 任务书归属日期" ;
+             rdfs:comment "整包任务发生的时间，整包任务的费用成本按照该字段计算归属周期" ;
+             rdfs:label "整包任务归属日期" .
+
+
+###  http://datahub/cost#task_end_time
+ex:task_end_time rdf:type owl:DatatypeProperty ,
+                          owl:FunctionalProperty ;
+                 rdfs:domain ex:task ;
+                 rdfs:range xsd:date ;
+                 ex:examples "2025-10-24" ;
+                 ex:source_mapping "原始表3、原始表5 结束时间" ;
+                 rdfs:comment "该任务预计完成的时间" ;
+                 rdfs:label "任务结束时间" .
+
+
+###  http://datahub/cost#task_id
+ex:task_id rdf:type owl:DatatypeProperty ,
+                    owl:FunctionalProperty ;
+           rdfs:domain ex:task ;
+           rdfs:range xsd:string ;
+           ex:examples "TB-20251019003" ;
+           ex:source_mapping "原始表3 、 原始表5 任务书编号" ;
+           rdfs:comment "任务的标识id" ;
+           rdfs:label "任务ID" .
+
+
+###  http://datahub/cost#task_name
+ex:task_name rdf:type owl:DatatypeProperty ,
+                      owl:FunctionalProperty ;
+             rdfs:domain ex:task ;
+             rdfs:range xsd:string ;
+             ex:examples "北京中核华辉科技发展有限公司私有云产品定制开发任务书" ;
+             ex:source_mapping "原始表3  任务书名称、 原始表5 工程师任务" ;
+             rdfs:comment "任务的名称，大概说明任务要做什么" ;
+             rdfs:label "任务名称" .
+
+
+###  http://datahub/cost#task_sign_status
+ex:task_sign_status rdf:type owl:DatatypeProperty ,
+                             owl:FunctionalProperty ;
+                    rdfs:domain ex:task ;
+                    rdfs:range xsd:string ;
+                    ex:examples "未签约" ;
+                    ex:source_mapping "原始表3、原始表5 审批状态" ;
+                    rdfs:comment "是否已经和服务商签约" ;
+                    rdfs:label "任务签约状态" .
+
+
+###  http://datahub/cost#task_start_time
+ex:task_start_time rdf:type owl:DatatypeProperty ,
+                            owl:FunctionalProperty ;
+                   rdfs:domain ex:task ;
+                   rdfs:range xsd:date ;
+                   ex:examples "2025-09-08" ;
+                   ex:source_mapping "原始表3、原始表5 开始时间" ;
+                   rdfs:comment "该任务预计开始进行的时间" ;
+                   rdfs:label "任务开始时间" .
+
+
+###  http://datahub/cost#tast_Project_Phase
+ex:tast_Project_Phase rdf:type owl:DatatypeProperty ,
+                               owl:FunctionalProperty ;
+                      rdfs:domain ex:task ;
+                      rdfs:range xsd:string ;
+                      ex:source_mapping """\"仅针对项目整包的任务
+查找与归属日期最近的正编工作，取其对应的项目阶段，若有多个阶段则取最后的；若找不到，则取对应项目的项目阶段\"""" ;
+                      rdfs:comment """\"任务发起时，项目所处的阶段。仅项目整包任务的成本按此阶段计算。按照项目的发展顺序，枚举如下
+-需求交流
+-方案确认
+-推动签约
+-投产阶段
+-推广验收
+-运维阶段\"""" ;
+                      rdfs:label "任务所属项目阶段" .
+
+
+###  http://datahub/cost#tax_rate
+ex:tax_rate rdf:type owl:DatatypeProperty ,
+                     owl:FunctionalProperty ;
+            rdfs:domain ex:task ;
+            rdfs:range xsd:decimal ;
+            ex:examples "6%" ;
+            ex:source_mapping "原始表3 税率 、原始表5 L列税率" ;
+            rdfs:comment "费用的核算税率" ;
+            rdfs:label "税率" .
+
+
+###  http://datahub/cost#travel_expense
+ex:travel_expense rdf:type owl:DatatypeProperty ,
+                           owl:FunctionalProperty ;
+                  rdfs:domain ex:task ;
+                  rdfs:range xsd:decimal ;
+                  ex:examples "0" ;
+                  ex:source_mapping "原始表3 差旅费用" ,
+                                    "原始表3 差旅费用 、原始表5 AS列差旅服务总金额" ;
+                  rdfs:comment "任务金额中，差旅费用的花费" ;
+                  rdfs:label "差旅费用" .
+
+
+###  http://datahub/cost#urgency_level
+ex:urgency_level rdf:type owl:DatatypeProperty ,
+                          owl:FunctionalProperty ;
+                 rdfs:domain ex:service ;
+                 rdfs:range xsd:string ;
+                 ex:examples "紧急，推广前需上线需求" ;
+                 ex:source_mapping "原始表6 紧急程度说明" ;
+                 rdfs:comment "说明服务的紧急程度，是否需要尽快交付" ;
+                 rdfs:label "紧急程度" .
+
+
+###  http://datahub/cost#验收核算后的成本费用中，差旅费是多少
+ex:验收核算后的成本费用中，差旅费是多少 rdf:type owl:DatatypeProperty ,
+                               owl:FunctionalProperty ;
+                      rdfs:domain ex:contractor_work_acceptance ;
+                      rdfs:range xsd:decimal ;
+                      ex:source_mapping "原始表11 P列 验收人天数" ;
+                      rdfs:comment "经过验收核算，该任务实际发生的工作量，单位为人天" ;
+                      rdfs:label "验收工时" .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://datahub/cost#contractor_work
+ex:contractor_work rdf:type owl:Class ;
+                   rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                     owl:onProperty ex:contractor_work_Date ;
+                                     owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                     owl:onDataRange xsd:date
+                                   ] ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty ex:contractor_work_Description ;
+                                     owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                     owl:onDataRange xsd:string
+                                   ] ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty ex:contractor_work_Engineer ;
+                                     owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                     owl:onDataRange xsd:string
+                                   ] ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty ex:contractor_work_Method ;
+                                     owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                     owl:onDataRange xsd:string
+                                   ] ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty ex:contractor_work_Type ;
+                                     owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                     owl:onDataRange xsd:string
+                                   ] ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty ex:contractor_work_Vendor ;
+                                     owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                     owl:onDataRange xsd:string
+                                   ] ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty ex:contractor_work__Project_Phase ;
+                                     owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                     owl:onDataRange xsd:string
+                                   ] ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty ex:contractor_work_cost ;
+                                     owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                     owl:onDataRange xsd:decimal
+                                   ] ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty ex:contractor_work_hours_Ratio ;
+                                     owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                     owl:onDataRange xsd:decimal
+                                   ] ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty ex:contractor_work_hours_acceptance ;
+                                     owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                     owl:onDataRange xsd:decimal
+                                   ] ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty ex:contractor_work_hours_reported ;
+                                     owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                     owl:onDataRange xsd:decimal
+                                   ] ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty ex:contractor_work_id ;
+                                     owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                     owl:onDataRange xsd:string
+                                   ] ;
+                   ex:description "外包员工在某一日，发生了对某个项目的工作投入，产生工时与成本" ;
+                   ex:rules "外包工时先由工程师上报，我们再进行验收，经过验收的工时与成本才是实际发生的" ;
+                   ex:source_mapping "原始表X 服务商日报-工程师日报明细 日报明细名称" ;
+                   rdfs:comment "外包员工在项目上投入了工作" ;
+                   rdfs:label "外包工作" .
+
+
+###  http://datahub/cost#contractor_work_acceptance
+ex:contractor_work_acceptance rdf:type owl:Class ;
+                              rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                                owl:onProperty ex:contractor_work_acceptance_content ;
+                                                owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                                owl:onDataRange xsd:string
+                                              ] ,
+                                              [ rdf:type owl:Restriction ;
+                                                owl:onProperty ex:contractor_work_acceptance_id ;
+                                                owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                                owl:onDataRange xsd:string
+                                              ] ,
+                                              [ rdf:type owl:Restriction ;
+                                                owl:onProperty ex:contractor_work_acceptance_month ;
+                                                owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                                owl:onDataRange xsd:string
+                                              ] ,
+                                              [ rdf:type owl:Restriction ;
+                                                owl:onProperty ex:contractor_work_acceptance_quality ;
+                                                owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                                owl:onDataRange xsd:decimal
+                                              ] ,
+                                              [ rdf:type owl:Restriction ;
+                                                owl:onProperty ex:contractor_work_acceptance_total_cost ;
+                                                owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                                owl:onDataRange xsd:decimal
+                                              ] ,
+                                              [ rdf:type owl:Restriction ;
+                                                owl:onProperty ex:contractor_work_acceptance_travel_cost ;
+                                                owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                                owl:onDataRange xsd:decimal
+                                              ] ,
+                                              [ rdf:type owl:Restriction ;
+                                                owl:onProperty ex:验收核算后的成本费用中，差旅费是多少 ;
+                                                owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                                owl:onDataRange xsd:decimal
+                                              ] ;
+                              ex:description "人员外包任务，每个月会产生外包任务验收，核算本月实际发生的工时和费用" ;
+                              ex:rules "验收的工程师应为针对验证针对任务中的工程师" ;
+                              ex:source_mapping "原始表11 工程师任务验收单编码" ;
+                              rdfs:comment "对外包任务进行月度验收确认" ;
+                              rdfs:label "外包任务月度验收" .
+
+
+###  http://datahub/cost#corporate_budget
+ex:corporate_budget rdf:type owl:Class ;
+                    rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                      owl:onProperty ex:corporate_budget_id ;
+                                      owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                      owl:onDataRange xsd:string
+                                    ] ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty ex:corporate_budget_level ;
+                                      owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                      owl:onDataRange xsd:string
+                                    ] ;
+                    owl:hasKey ( ex:corporate_budget_id
+                               ) ;
+                    ex:description "公司预算分为二级和三级，其中三级预算归属于二级预算" ;
+                    ex:rules """在年度内，所有项目在某一类外包服务上发生的费用总和，应不超过公司预算
+""" ;
+                    ex:source_mapping "原始表6 预算映射id、二级预算id" ;
+                    rdfs:comment "公司为某一类服务提前圈定的年度预算"@zh ;
+                    rdfs:label "公司预算"@zh .
+
+
+###  http://datahub/cost#customer
+ex:customer rdf:type owl:Class ;
+            rdfs:subClassOf [ rdf:type owl:Restriction ;
+                              owl:onProperty ex:customer_id ;
+                              owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                              owl:onDataRange xsd:string
+                            ] ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty ex:customer_name ;
+                              owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                              owl:onDataRange xsd:string
+                            ] ;
+            owl:hasKey ( ex:customer_id
+                       ) ;
+            ex:description "可能是已购买我们产品，达成合作关系，也可能是潜在客户；" ;
+            ex:rules "客户包含项目，所有产品都基于项目交付给客户，所有“外包服务”也基于某个项目为客户服务" ;
+            ex:source_mapping "原始表PMS  G列客户编号" ;
+            rdfs:comment "我们的客户"@zh ;
+            rdfs:label "客户"@zh .
+
+
+###  http://datahub/cost#department
+ex:department rdf:type owl:Class ;
+              rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                owl:onProperty ex:dept_id ;
+                                owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                owl:onDataRange xsd:string
+                              ] ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty ex:dept_level ;
+                                owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                owl:onDataRange xsd:string
+                              ] ;
+              owl:hasKey ( ex:dept_id
+                         ) ;
+              ex:description "可能有多级，多级部门的完整路径表示为：XX/XX/XX/XX" ;
+              ex:rules """所有员工角色，如项目负责人、项目经理、销售等，都应属于某个部门；
+可根据某一个部门，查找其上级部门；
+如果未按照XX/XX/XX/XX描述完整部门层级时，需按照部门名称寻找其父部门与子部门""" ;
+              ex:source_mapping "原始表X 一级部门、二级部门、三级部门、四级部门" ;
+              rdfs:comment "公司内部的部门" ;
+              rdfs:label "部门"@zh .
+
+
+###  http://datahub/cost#employee_work
+ex:employee_work rdf:type owl:Class ;
+                 rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                   owl:onProperty ex:employee_work_editor ;
+                                   owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                   owl:onDataRange xsd:string
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty ex:employee_work_hours ;
+                                   owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                   owl:onDataRange xsd:decimal
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty ex:employee_work_id ;
+                                   owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                   owl:onDataRange xsd:string
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty ex:employee_work_method ;
+                                   owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                   owl:onDataRange xsd:string
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty ex:employee_work_time ;
+                                   owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                   owl:onDataRange xsd:date
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty ex:employee_work_type ;
+                                   owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                   owl:onDataRange xsd:string
+                                 ] ;
+                 ex:description "正编员工在某一日，发生了对某个项目的工作投入，产生工时与成本" ;
+                 ex:rules "通过工时换算的成本，按照以下公式计算“成本（元）=工时（小时）*231（元/小时）”" ;
+                 ex:source_mapping "原始表X日报明细-日报明细 编号" ;
+                 rdfs:comment "正编员工在项目上投入了工作" ;
+                 rdfs:label "正编工作" .
+
+
+###  http://datahub/cost#opportunity
+ex:opportunity rdf:type owl:Class ;
+               rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                 owl:onProperty ex:opportunity_id ;
+                                 owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                 owl:onDataRange xsd:string
+                               ] ;
+               owl:hasKey ( ex:opportunity_id
+                          ) ;
+               ex:description "商机可能已经转化为了实际的订单，也有可能还在跟踪中，并未发生实际购买行为；" ;
+               ex:rules "一个商机下有可能有多个订单；" ;
+               ex:source_mapping "原始表4 商机号" ;
+               rdfs:comment "客户有意向购买我们的产品时，销售负责人会录入一条商机" ;
+               rdfs:label "商机"@zh .
+
+
+###  http://datahub/cost#order
+ex:order rdf:type owl:Class ;
+         rdfs:subClassOf [ rdf:type owl:Restriction ;
+                           owl:onProperty ex:order_id ;
+                           owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                           owl:onDataRange xsd:string
+                         ] ;
+         owl:hasKey ( ex:order_id
+                    ) ;
+         ex:rules """每个订单只会包含一个产品；
+订单一定与某个商机相关，没有商机无法下订单；""" ;
+         ex:source_mapping "原始表4 订单号" ;
+         rdfs:comment "即客户购买我们产品的订单" ;
+         rdfs:label "订单"@zh .
+
+
+###  http://datahub/cost#produce_line
+ex:produce_line rdf:type owl:Class ;
+                rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                  owl:onProperty ex:produce_line_name ;
+                                  owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                  owl:onDataRange xsd:string
+                                ] ;
+                owl:hasKey ( ex:produce_line_name
+                           ) ;
+                ex:source_mapping "原始表X 日报明细-日报明细 J列产品条线" ;
+                rdfs:comment "我们售卖产品的基础分类" ;
+                rdfs:label "产品条线" .
+
+
+###  http://datahub/cost#product
+ex:product rdf:type owl:Class ;
+           rdfs:subClassOf [ rdf:type owl:Restriction ;
+                             owl:onProperty ex:product_id ;
+                             owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                             owl:onDataRange xsd:string
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty ex:product_name ;
+                             owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                             owl:onDataRange xsd:string
+                           ] ;
+           owl:hasKey ( ex:product_id
+                      ) ;
+           ex:description "我们向客户售卖的具体产品SKU" ;
+           ex:source_mapping """原始表4 产品名称 + 原始表X 日报明细-日报明细I列产品类型
+去重""" ;
+           rdfs:comment "我们向客户售卖的软件产品" ;
+           rdfs:label "产品"@zh .
+
+
+###  http://datahub/cost#product_catelogy
+ex:product_catelogy rdf:type owl:Class ;
+                    rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                      owl:onProperty ex:product_category_id ;
+                                      owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                      owl:onDataRange xsd:string
+                                    ] ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty ex:product_category_name ;
+                                      owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                      owl:onDataRange xsd:string
+                                    ] ;
+                    owl:hasKey ( ex:product_category_id
+                               ) ;
+                    ex:description """计算成本时的产品分类，每个分类下包含多种产品；
+枚举包含：
+-WPS端
+-公有云
+-老版私有云（不含中台）
+-私有云V7
+-文档中台""" ;
+                    ex:source_mapping "原始表4 成本产品线 " ;
+                    rdfs:comment "计算成本时，对产品的分类方式" ;
+                    rdfs:label "产品成本类别"@zh .
+
+
+###  http://datahub/cost#project
+ex:project rdf:type owl:Class ;
+           rdfs:subClassOf [ rdf:type owl:Restriction ;
+                             owl:onProperty ex:pj_leader ;
+                             owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                             owl:onDataRange xsd:string
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty ex:pj_manager ;
+                             owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                             owl:onDataRange xsd:string
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty ex:pj_starttime ;
+                             owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                             owl:onDataRange xsd:date
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty ex:pj_trace ;
+                             owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                             owl:onDataRange xsd:string
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty ex:pj_type ;
+                             owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                             owl:onDataRange xsd:string
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty ex:project_id ;
+                             owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                             owl:onDataRange xsd:string
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty ex:project_name ;
+                             owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                             owl:onDataRange xsd:string
+                           ] ;
+           owl:hasKey ( ex:project_id
+                      ) ;
+           ex:description """通过项目向客户交付产品，项目有不同阶段状态，按顺序包括
+-售前交流 
+-POC阶段
+-签约阶段
+-投产阶段
+-推广验收
+-运维阶段""" ;
+           ex:rules """一个客户可能会有多个项目；
+多个项目中包含的产品有可能不同，也有可能相同；
+所有外包服务都必须基于项目发起的；""" ;
+           ex:source_mapping "原始表PMS 项目编号 且排除I列为“公共项目”的" ;
+           rdfs:comment "我们为客户交付一系列产品的“项目”" ;
+           rdfs:label "项目"@zh .
+
+
+###  http://datahub/cost#project_budget
+ex:project_budget rdf:type owl:Class ;
+                  rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                    owl:onProperty ex:project_budget_amount ;
+                                    owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                    owl:onDataRange xsd:decimal
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ex:project_budget_dependency_type ;
+                                    owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                    owl:onDataRange xsd:string
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ex:project_budget_id ;
+                                    owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                    owl:onDataRange xsd:string
+                                  ] ;
+                  owl:hasKey ( ex:project_budget_id
+                             ) ;
+                  ex:description """考虑到项目后续可能会需要外部服务商支持，项目经理可以提前申请预算；
+发起服务申请时，即依赖该预算；""" ;
+                  ex:rules """一个预算可以被同项目的多个服务申请依赖；
+正常情况下，这些被某个项目预算依赖的所有服务的预估费用总和应不超过项目预算金额""" ;
+                  ex:source_mapping "原始表4 项目预算明细编号" ;
+                  rdfs:comment "项目为可能发生的外部服务提前申请的预算" ;
+                  rdfs:label "项目预算"@zh .
+
+
+###  http://datahub/cost#service
+ex:service rdf:type owl:Class ;
+           rdfs:subClassOf [ rdf:type owl:Restriction ;
+                             owl:onProperty ex:approval_status ;
+                             owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                             owl:onDataRange xsd:string
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty ex:delivery_manager ;
+                             owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                             owl:onDataRange xsd:string
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty ex:delivery_method ;
+                             owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                             owl:onDataRange xsd:string
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty ex:service_cost_source ;
+                             owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                             owl:onDataRange xsd:string
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty ex:service_create_time ;
+                             owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                             owl:onDataRange xsd:dateTime
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty ex:service_customer_type ;
+                             owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                             owl:onDataRange xsd:string
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty ex:service_estimated_cost ;
+                             owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                             owl:onDataRange xsd:decimal
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty ex:service_id ;
+                             owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                             owl:onDataRange xsd:string
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty ex:service_initiator ;
+                             owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                             owl:onDataRange xsd:string
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty ex:service_initiator_dept ;
+                             owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                             owl:onDataRange xsd:string
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty ex:service_mode ;
+                             owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                             owl:onDataRange xsd:string
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty ex:service_stage_status ;
+                             owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                             owl:onDataRange xsd:string
+                           ] ;
+           owl:hasKey ( ex:service_id
+                      ) ;
+           ex:description "服务申请可能包含技术支持、培训、运维、二次开发等服务" ;
+           ex:rules """一个项目可能有多个服务申请；
+服务申请需要的费用依赖于项目预算；
+服务发起时，需要预估费用""" ;
+           ex:source_mapping "原始表6 服务申请编号" ;
+           rdfs:comment "即外包服务申请，某个项目需要外包支持时，由项目经理发起，寻找外包服务商" ;
+           rdfs:label "服务"@zh .
+
+
+###  http://datahub/cost#service_catalogy
+ex:service_catalogy rdf:type owl:Class ;
+                    rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                      owl:onProperty ex:service_category_id ;
+                                      owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                      owl:onDataRange xsd:string
+                                    ] ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty ex:service_category_name ;
+                                      owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                      owl:onDataRange xsd:string
+                                    ] ;
+                    owl:hasKey ( ex:service_category_id
+                               ) ;
+                    ex:description """主要用于对外（服务商）说明任务内容；
+""" ;
+                    ex:rules "公司内部对服务做分类统计时，除非明确提出要按照此字段统计，否则不首选该字段；" ;
+                    ex:source_mapping "原始表6 服务类目" ;
+                    rdfs:comment "一种将服务内容分类的方式，在发起服务申请与任务时按此分类" ;
+                    rdfs:label "服务类目"@zh .
+
+
+###  http://datahub/cost#service_type
+ex:service_type rdf:type owl:Class ;
+                rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                  owl:onProperty ex:service_type_id ;
+                                  owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                  owl:onDataRange xsd:string
+                                ] ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty ex:service_type_level ;
+                                  owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                  owl:onDataRange xsd:string
+                                ] ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty ex:service_type_name ;
+                                  owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                  owl:onDataRange xsd:string
+                                ] ;
+                owl:hasKey ( ex:service_type_id
+                           ) ;
+                ex:description """包含两个服务类型级别，一级服务类型下包含多个二级服务类型；
+枚举如下
+-专项服务（包含的二级服务类型：专项服务-HW、专项服务-灯塔、专项服务-升级）
+-标准服务（包含的二级服务类型：标准部署与运维、培训服务、标准账号对接、远程支持服务）
+-定制服务（包含的二级服务类型：定制运维、二次开发、非标账号对接、客户端系统集成服务、客户端现场安装、培训及内容定制、私有云非标部署、驻场服务）""" ;
+                ex:rules "公司内部主要按此对外包服务做分类统计，可以从一级服务类型维度统计，也可以从二级服务类型维度统计；" ;
+                ex:source_mapping "原始表X 一级服务类型、二级服务类型" ;
+                rdfs:comment "一种将服务内容分类的方式，在发起项目预算申请时按此分类" ;
+                rdfs:label "服务类型"@zh .
+
+
+###  http://datahub/cost#task
+ex:task rdf:type owl:Class ;
+        rdfs:subClassOf [ rdf:type owl:Restriction ;
+                          owl:onProperty ex:contract_entity ;
+                          owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                          owl:onDataRange xsd:string
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty ex:service_provider ;
+                          owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                          owl:onDataRange xsd:string
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty ex:task_amount ;
+                          owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                          owl:onDataRange xsd:decimal
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty ex:task_creator ;
+                          owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                          owl:onDataRange xsd:string
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty ex:task_id ;
+                          owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                          owl:onDataRange xsd:string
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty ex:task_name ;
+                          owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                          owl:onDataRange xsd:string
+                        ] ;
+        owl:hasKey ( ex:task_id
+                   ) ;
+        ex:description """在服务申请通过之后，由项目向中标的服务商发起任务，任务中说明服务的具体内容，并与服务商形成合同关系；
+""" ;
+        ex:rules """项目整包时，任务金额为即此次外包实际支出的费用；
+人员外包时，要根据任务对应的外包工作验收金额计算实际成本""" ;
+        ex:source_mapping "原始表3+原始表5 任务书编号" ;
+        rdfs:comment "即向外部服务商派发的实际任务" ;
+        rdfs:label "任务"@zh .
+
+
+#################################################################
+#    Individuals
+#################################################################
+
+###  http://datahub/cost#C-00035378
+ex:C-00035378 rdf:type owl:NamedIndividual ,
+                       ex:customer ;
+              ex:contain_projects ex:PJ-25010034 ;
+              ex:customer_belongs_to_department ex:军工一组 ;
+              ex:generate_opportunity ex:PR-00167290 ;
+              ex:customer_fieldtype "国企行业" ;
+              ex:customer_name "北京中核华辉科技发展有限公司" ;
+              ex:customer_sale "罗幽兰" ;
+              rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#DPD-20251128-0467
+ex:DPD-20251128-0467 rdf:type owl:NamedIndividual ,
+                              ex:contractor_work ;
+                     ex:contractor_work_belongs_to_product ex:金山协作办公系统V7 ;
+                     ex:contractor_work_belongs_to_task ex:TB-202506300046 ;
+                     rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#MA-8066
+ex:MA-8066 rdf:type owl:NamedIndividual ,
+                    ex:contractor_work_acceptance ;
+           rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#PBD＃20250100035
+ex:PBD＃20250100035 rdf:type owl:NamedIndividual ,
+                            ex:project_budget ;
+                   ex:depend_on_opportunity ex:PR-00167290 ;
+                   ex:project-based_task_belongs_to_service_type ex:标准账号对接 ;
+                   ex:project_budget_amount 272950 ;
+                   ex:project_budget_dependency_type "关联商机" ;
+                   ex:project_budget_id "PBD＃20250100035" ;
+                   ex:project_remaining_occupiable_amount 85550 ;
+                   ex:project_remaining_usable_amount 85550 ;
+                   ex:service_cost_source "销售承担" ;
+                   rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#PBD＃20250600001
+ex:PBD＃20250600001 rdf:type owl:NamedIndividual ,
+                            ex:project_budget ;
+                   ex:depend_on_order ex:S00292777 ;
+                   ex:project_budget_id "PBD＃20250600001" ;
+                   rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#PDMX2511300048
+ex:PDMX2511300048 rdf:type owl:NamedIndividual ,
+                           ex:employee_work ;
+                  ex:employee_work_belongs_to_service_type ex:PDMX2511300048 ;
+                  ex:product_involved_in_employee_work ex:WPS协作 ;
+                  rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#PJ-25010034
+ex:PJ-25010034 rdf:type owl:NamedIndividual ,
+                        ex:project ;
+               ex:generate_employee_work ex:PDMX2511300048 ;
+               ex:generate_project_budget ex:PBD＃20250100035 ;
+               ex:generate_single-customer_service ex:PR-20250926-0005 ;
+               ex:project_belongs_to_department ex:大客特种客成组 ;
+               ex:project_generate_contractor_work ex:DPD-20251128-0467 ;
+               ex:pj_leader "权广政" ;
+               ex:pj_level "核心（1级）" ;
+               ex:pj_trace "方案确认" ;
+               ex:project_id "PJ-25010034" ;
+               ex:project_name "2025中核华辉金山协作项目" ;
+               rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#PR-00167290
+ex:PR-00167290 rdf:type owl:NamedIndividual ,
+                        ex:opportunity ;
+               ex:opportunity_details "华辉协作项目_WPS 365专业办公高级平台V7" ;
+               ex:opportunity_id "PR-00167290" ;
+               rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#PR-20250926-0005
+ex:PR-20250926-0005 rdf:type owl:NamedIndividual ,
+                             ex:service ;
+                    ex:belongs_to_service_catalogy ex:私有云产品定制开发 ;
+                    ex:depend_on_level_2_corporate_budget <http://datahub/cost#25T-TBG-Q4-PRO-V4.3> ;
+                    ex:depend_on_level_3_corporate_budget <http://datahub/cost#25Q4-DKYX-V4.3> ;
+                    ex:depend_on_project_budget ex:PBD＃20250100035 ;
+                    ex:generate_task ex:TB-20251019003 ;
+                    ex:approval_status "审批通过" ;
+                    ex:delivery_manager "周云1" ;
+                    ex:delivery_method "远程" ;
+                    ex:estimated_end_time "2025-10-24"^^xsd:date ;
+                    ex:estimated_start_time "2025-09-08"^^xsd:date ;
+                    ex:maintenance_period "12"^^xsd:int ;
+                    ex:service_address "北京市海淀区科原大厦B座" ;
+                    ex:service_city "北京市" ;
+                    ex:service_content """\"1.负责双因子认证方式的定开、测试、部署和运维工作；
+2.认证方式包括账密、短信、旧设备扫码和同事辅助认证；
+3.负责开发实现常用设备管理能力及相关交互界面的开发。\"""" ;
+                    ex:service_create_time "2025-09-26T11:23:00"^^xsd:dateTime ;
+                    ex:service_customer_type "单客户服务" ;
+                    ex:service_estimated_cost 187400 ;
+                    ex:service_id "PR-20250926-0005" ;
+                    ex:service_initiator "权广政" ;
+                    ex:service_initiator_dept "大客特种客成组" ;
+                    ex:service_mode "项目整包" ;
+                    ex:service_province "北京市" ;
+                    ex:service_stage_status "交付阶段" ;
+                    ex:service_tags "私有云产品定制开发" ;
+                    ex:service_theme "中核华辉协作项目双因子认证二开服务单申请" ;
+                    ex:service_used_amount 1138590 ;
+                    ex:settlement_terms """\"阶段性验收结算：
+初验：项目成果交付物+交付内部验收单 20.0%
+终验：客户回执单/邮件 75.0%
+维保：维保内部验收单 5.0%\"""" ;
+                    ex:urgency_level "紧急，推广前需上线需求" ;
+                    rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#PR-20251202-0010
+ex:PR-20251202-0010 rdf:type owl:NamedIndividual ,
+                             ex:service ;
+                    ex:multi-customer_service_belongs_to_department <http://datahub/cost#用户增长策略客成组/教育客户成功> ;
+                    rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#S00292777
+ex:S00292777 rdf:type owl:NamedIndividual ,
+                      ex:order ;
+             ex:order_id "S00292777" ;
+             rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#S00540771
+ex:S00540771 rdf:type owl:NamedIndividual ,
+                      ex:order ;
+             ex:contain_product ex:WPS_365教育高级版 ;
+             ex:order_belongs_to_department ex:教育销售华东组 ;
+             ex:order_id "S00540771" ;
+             rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#TB-202506300046
+ex:TB-202506300046 rdf:type owl:NamedIndividual ;
+                   rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#TB-202506300060
+ex:TB-202506300060 rdf:type owl:NamedIndividual ;
+                   ex:task_generate_contractor_work_acceptance ex:MA-8066 ;
+                   rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#TB-20251019003
+ex:TB-20251019003 rdf:type owl:NamedIndividual ,
+                           ex:task ;
+                  ex:project-based_task_belongs_to_product_catalogy ex:私有云v7 ;
+                  ex:contract_entity "北京金山办公软件股份有限公司" ;
+                  ex:service_provider "武汉上云爱办公数字科技有限公司" ;
+                  ex:task_amount 187400 ;
+                  ex:task_approval_status "审批中" ;
+                  ex:task_create_time "2025-10-19T16:46:00"^^xsd:dateTime ;
+                  ex:task_creator "周云1" ;
+                  ex:task_date "2025-10-19"^^xsd:date ;
+                  ex:task_end_time "2025-10-24"^^xsd:date ;
+                  ex:task_id "TB-20251019003" ;
+                  ex:task_name "北京中核华辉科技发展有限公司私有云产品定制开发任务书" ;
+                  ex:task_sign_status "未签约" ;
+                  ex:task_start_time "2025-09-08"^^xsd:date ;
+                  ex:tax_rate 0.06 ;
+                  ex:travel_expense 0 ;
+                  rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#WPS_365教育高级版
+ex:WPS_365教育高级版 rdf:type owl:NamedIndividual ,
+                         ex:product ;
+                ex:belongs_to_product_catalogy ex:公有云 ;
+                ex:product_name "WPS 365教育高级版" ;
+                rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#WPS协作
+ex:WPS协作 rdf:type owl:NamedIndividual ;
+         rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#WPS文档中心
+ex:WPS文档中心 rdf:type owl:NamedIndividual ;
+           ex:belongs_to_product_line ex:私有云单品 ;
+           rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#二次开发
+ex:二次开发 rdf:type owl:NamedIndividual ;
+        ex:belongs_to_level_1_service_type ex:定制服务 ;
+        rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#企业大客营销部
+ex:企业大客营销部 rdf:type owl:NamedIndividual ,
+                    ex:department ;
+           ex:dept_level "二级" ;
+           ex:dept_name "企业大客营销部" ;
+           rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#公有云
+ex:公有云 rdf:type owl:NamedIndividual ,
+                ex:product_catelogy ;
+       ex:product_category_name "公有云" ;
+       rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#军工一组
+ex:军工一组 rdf:type owl:NamedIndividual ,
+                 ex:department ;
+        ex:dept_level "四级" ;
+        ex:dept_name "军工一组" ;
+        rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#大客特种客成组
+ex:大客特种客成组 rdf:type owl:NamedIndividual ,
+                    ex:department ;
+           owl:sameAs <http://datahub/cost#大客特种/大客特种客成组> ;
+           ex:dept_level "四级" ;
+           ex:dept_name "大客特种客成组" ;
+           rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#大客特种/大客特种客成组
+
+###  http://datahub/cost#定制服务
+ex:定制服务 rdf:type owl:NamedIndividual ;
+        rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#教育销售华东组
+ex:教育销售华东组 rdf:type owl:NamedIndividual ,
+                    ex:department ;
+           ex:dept_level "四级" ;
+           ex:dept_name "教育销售华东组" ;
+           rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#标准服务
+ex:标准服务 rdf:type owl:NamedIndividual ,
+                 ex:service_type ;
+        ex:service_type_level "一级服务类型" ;
+        rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#标准账号对接
+ex:标准账号对接 rdf:type owl:NamedIndividual ,
+                   ex:service_type ;
+          ex:belongs_to_level_1_service_type ex:标准服务 ;
+          ex:service_type_level "二级服务类型" ;
+          ex:service_type_name "标准账号对接" ;
+          rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#私有云v7
+ex:私有云v7 rdf:type owl:NamedIndividual ,
+                  ex:product_catelogy ;
+         ex:product_category_name "私有云v7" ;
+         rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#私有云产品定制开发
+ex:私有云产品定制开发 rdf:type owl:NamedIndividual ,
+                      ex:service_catalogy ;
+             ex:service_category_name "私有云产品定制开发" ;
+             rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#私有云单品
+ex:私有云单品 rdf:type owl:NamedIndividual ,
+                  ex:produce_line ;
+         rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#远程技术服务
+ex:远程技术服务 rdf:type owl:NamedIndividual ;
+          rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#金山协作办公系统V7
+ex:金山协作办公系统V7 rdf:type owl:NamedIndividual ;
+              rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#25CLD-SD-BPO-01
+<http://datahub/cost#25CLD-SD-BPO-01> rdf:type owl:NamedIndividual ,
+                                               ex:corporate_budget ;
+                                      ex:corporate_budget_id "25CLD-SD-BPO-01" ;
+                                      ex:corporate_budget_level "三级预算" ;
+                                      ex:corporate_budget_subject "产研预算" ;
+                                      rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#25Q4-DKYX-V4.3
+<http://datahub/cost#25Q4-DKYX-V4.3> rdf:type owl:NamedIndividual ,
+                                              ex:corporate_budget ;
+                                     ex:belongs_to_parent_corporate_budget <http://datahub/cost#25T-TBG-Q4-PRO-V4.3> ;
+                                     ex:corporate_budget_id "25Q4-DKYX-V4.3" ;
+                                     ex:corporate_budget_level "三级预算" ;
+                                     rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#25T-TBG-Q4-PRO-V4.3
+<http://datahub/cost#25T-TBG-Q4-PRO-V4.3> rdf:type owl:NamedIndividual ,
+                                                   ex:corporate_budget ;
+                                          ex:corporate_budget_id "25T-TBG-Q4-PRO-V4.3" ;
+                                          ex:corporate_budget_item_description "驻场服务" ;
+                                          ex:corporate_budget_level "二级预算" ;
+                                          ex:corporate_budget_subject "驻场服务" ;
+                                          rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#25TBG-SD-OPR-23
+<http://datahub/cost#25TBG-SD-OPR-23> rdf:type owl:NamedIndividual ,
+                                               ex:corporate_budget ;
+                                      ex:corporate_budget_id "25TBG-SD-OPR-23" ;
+                                      ex:corporate_budget_level "三级预算" ;
+                                      ex:corporate_budget_subject "品牌市场部预算" ;
+                                      rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#大客特种/大客特种客成组
+<http://datahub/cost#大客特种/大客特种客成组> rdf:type owl:NamedIndividual ,
+                                            ex:department ;
+                                   ex:belongs_to_parent_department ex:企业大客营销部 ;
+                                   ex:dept_level "四级" ;
+                                   ex:dept_name "大客特种/大客特种客成组" ;
+                                   rdfs:comment "示例，供参考" .
+
+
+###  http://datahub/cost#用户增长策略客成组/教育客户成功
+<http://datahub/cost#用户增长策略客成组/教育客户成功> rdf:type owl:NamedIndividual ;
+                                       rdfs:comment "示例，供参考" .
+
+
+###  Generated by the OWL API (version 4.5.29.2024-05-13T12:11:03Z) https://github.com/owlcs/owlapi

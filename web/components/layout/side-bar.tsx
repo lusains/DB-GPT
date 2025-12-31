@@ -264,21 +264,6 @@ function SideBar() {
         isActive: pathname.startsWith('/chat'),
       },
       {
-        key: 'explore',
-        name: t('explore'),
-        isActive: pathname === '/',
-        icon: (
-          <Image
-            key='image_explore'
-            src={pathname === '/' ? '/pictures/explore_active.png' : '/pictures/explore.png'}
-            alt='construct_image'
-            width={40}
-            height={40}
-          />
-        ),
-        path: '/',
-      },
-      {
         key: 'construct',
         name: t('construct'),
         isActive: pathname.startsWith('/construct'),
@@ -424,7 +409,7 @@ function SideBar() {
   }, [i18n.language]);
 
   useEffect(() => {
-    setLogo(mode === 'dark' ? '/logo_s_latest.png' : '/logo_zh_latest.png');
+    setLogo(mode === 'dark' ? '/dasphere_dark.png' : '/dasphere_light.png');
   }, [mode]);
 
   if (!isMenuExpand) {
@@ -437,7 +422,7 @@ function SideBar() {
       >
         <div>
           <Link href='/' className='flex justify-center items-center pb-4'>
-            <Image src={isMenuExpand ? logo : '/LOGO_SMALL.png'} alt='DB-GPT' width={40} height={40} />
+            <Image src={isMenuExpand ? logo : '/dasphere_small.png'} alt='dasphere' width={40} height={40} />
           </Link>
           <div className='flex flex-col gap-4 items-center'>
             {functions.map(i => (
@@ -473,7 +458,7 @@ function SideBar() {
       <div>
         {/* LOGO */}
         <Link href='/' className='flex items-center justify-center p-2 pb-4'>
-          <Image src={isMenuExpand ? logo : '/LOGO_SMALL.png'} alt='DB-GPT' width={180} height={40} />
+          <Image src={isMenuExpand ? logo : '/dasphere_small.png'} alt='dasphere' width={180} height={40} />
         </Link>
         {/* functions */}
         <div className='flex flex-col gap-4'>

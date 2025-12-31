@@ -9,6 +9,8 @@ import Icon, {
 } from '@ant-design/icons';
 import { ConfigProvider, Tabs } from 'antd';
 import { t } from 'i18next';
+import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
 import './style.css';
@@ -66,12 +68,12 @@ function ConstructLayout({ children }: { children: React.ReactNode }) {
       icon: <MessageOutlined />,
       path: '/prompt',
     },
-    {
-      key: 'dbgpts',
-      name: t('dbgpts_community'),
-      path: '/dbgpts',
-      icon: <BuildOutlined />,
-    },
+    // {
+    //   key: 'dbgpts',
+    //   name: t('dbgpts_community'),
+    //   path: '/dbgpts',
+    //   icon: <BuildOutlined />,
+    // },
   ];
   const router = useRouter();
   const activeKey = router.pathname.split('/')[2];
@@ -112,15 +114,13 @@ function ConstructLayout({ children }: { children: React.ReactNode }) {
           onTabClick={key => {
             router.push(`/construct/${key}`);
           }}
-          // tabBarExtraContent={
-          //   <Button
-          //     className='border-none text-white bg-button-gradient h-full flex items-center'
-          //     icon={<PlusOutlined className='text-base' />}
-          //     // onClick={handleCreate}
-          //   >
-          //     {t('create_app')}
-          //   </Button>
-          // }
+          tabBarExtraContent={{
+            left: (
+              <Link href='/' className='flex items-center pr-4'>
+                <Image src='/dasphere_light.png' alt='dasphere' width={120} height={32} />
+              </Link>
+            ),
+          }}
         />
       </ConfigProvider>
     </div>

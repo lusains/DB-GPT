@@ -191,3 +191,10 @@ thirdparty
 configs/my
 .devcontainer/dev.toml
 test_docs
+
+# ai ide files
+.cursor/
+.claude/
+.serena
+.specify
+.playwright-mcp

@@ -33,6 +33,12 @@ class ChatScene(Enum):
         describe="Dialogue with your private data through natural language.",
         param_types=["DB Select"],
     )
+    ChatWithDbExecuteOntology = Scene(
+        code="chat_with_db_execute_ontology",
+        name="Chat Data (Ontology)",
+        describe="Ontology-aware dialogue with MySQL data using OWL schema mapping.",
+        param_types=["RDBMS Select", "Graph Select"],
+    )
     ExcelLearning = Scene(
         code="excel_learning",
         name="Excel Learning",

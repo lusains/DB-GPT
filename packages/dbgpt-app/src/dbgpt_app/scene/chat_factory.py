@@ -28,6 +28,12 @@ class ChatFactory(metaclass=Singleton):
         from dbgpt_app.scene.chat_db.auto_execute.prompt import (  # noqa: F401,F811
             prompt,
         )
+        from dbgpt_app.scene.chat_db.ontology_execute.chat import (  # noqa: F401
+            ChatWithDbOntologyExecute,
+        )
+        from dbgpt_app.scene.chat_db.ontology_execute.prompt import (  # noqa: F401,F811
+            prompt,
+        )
         from dbgpt_app.scene.chat_db.professional_qa.chat import (  # noqa: F401
             ChatWithDbQA,
         )

@@ -710,7 +710,7 @@ class GptsAppDao(BaseDao):
             "hot_value": (
                 hot_app_map.get(app_info.app_code, 0) if hot_app_map is not None else 0
             ),
-            "owner_name": app_info.user_code,
+            "owner_name": "dasphere",
             "owner_avatar_url": owner_avatar_url,
             "recommend_questions": (
                 [RecommendQuestion.from_entity(item) for item in recommend_questions]
@@ -1094,6 +1094,14 @@ class GptsAppDao(BaseDao):
             param_title="",
             show_disable=False,
         )
+        chat_with_db_execute_ontology_ctx = NativeTeamContext(
+            chat_scene="chat_with_db_execute_ontology",
+            scene_name="Chat Data (Ontology)",
+            scene_describe="Ontology-aware conversation with MySQL data using OWL schema"
+            " mapping",
+            param_title="",
+            show_disable=False,
+        )
         chat_dashboard_ctx = NativeTeamContext(
             chat_scene="chat_dashboard",
             scene_name="Chat Dashboard",
@@ -1217,6 +1225,39 @@ class GptsAppDao(BaseDao):
             gpts_dao.create(chat_with_db_execute_app)
         except Exception as ex:
             logger.exception(f"create chat_with_db_execute_app error: {ex}")
+
+        # Ontology-aware Chat Data app
+        chat_with_db_execute_ontology_app = GptsApp(
+            app_code=chat_with_db_execute_ontology_ctx.chat_scene,
+            app_name=chat_with_db_execute_ontology_ctx.scene_name,
+            language="zh",
+            team_mode="native_app",
+            details=[],
+            app_describe=chat_with_db_execute_ontology_ctx.scene_describe,
+            team_context=chat_with_db_execute_ontology_ctx,
+            param_need=[
+                {
+                    "type": AppParamType.Resource.value,
+                    "value": ResourceType.DB.value,
+                    "label": "RDBMS",
+                },
+                {
+                    "type": AppParamType.Resource.value,
+                    "value": ResourceType.DB.value,
+                    "label": "Graph DB",
+                },
+                {"type": AppParamType.Model.value, "value": None},
+                {"type": AppParamType.Temperature.value, "value": None},
+                {"type": AppParamType.MaxNewTokens.value, "value": None},
+            ],
+            user_code=user_code,
+            published="true",
+        )
+        try:
+            gpts_dao.remove_native_app(chat_with_db_execute_ontology_app.app_code)
+            gpts_dao.create(chat_with_db_execute_ontology_app)
+        except Exception as ex:
+            logger.exception(f"create chat_with_db_execute_ontology_app error: {ex}")
 
         chat_dashboard_app = GptsApp(
             app_code=chat_dashboard_ctx.chat_scene,
@@ -1350,6 +1391,25 @@ def native_app_params():
             {"type": AppParamType.MaxNewTokens.value, "value": None},
         ],
     }
+    chat_with_db_execute_ontology = {
+        "chat_scene": ChatScene.ChatWithDbExecuteOntology.value(),
+        "scene_name": ChatScene.ChatWithDbExecuteOntology.scene_name(),
+        "param_need": [
+            {
+                "type": AppParamType.Resource.value,
+                "value": ResourceType.DB.value,
+                "label": "RDBMS",
+            },
+            {
+                "type": AppParamType.Resource.value,
+                "value": ResourceType.DB.value,
+                "label": "Graph DB",
+            },
+            {"type": AppParamType.Model.value, "value": None},
+            {"type": AppParamType.Temperature.value, "value": None},
+            {"type": AppParamType.MaxNewTokens.value, "value": None},
+        ],
+    }
     chat_knowledge = {
         "chat_scene": ChatScene.ChatKnowledge.value(),
         "scene_name": ChatScene.ChatKnowledge.scene_name(),
@@ -1386,6 +1446,7 @@ def native_app_params():
         chat_excel,
         chat_with_db_qa,
         chat_with_db_execute,
+        chat_with_db_execute_ontology,
         chat_knowledge,
         chat_dashboard,
         chat_normal,
@@ -1402,6 +1463,7 @@ def adapt_native_app_model(dialogue: ConversationVo):
             ChatScene.ChatExcel.value(),
             ChatScene.ChatWithDbQA.value(),
             ChatScene.ChatWithDbExecute.value(),
+            ChatScene.ChatWithDbExecuteOntology.value(),
             ChatScene.ChatDashboard.value(),
             ChatScene.ChatNormal.value(),
         ]:
@@ -1425,29 +1487,67 @@ def adapt_native_app_model(dialogue: ConversationVo):
                 dialogue.prompt_code = (
                     prompt_params[0].get("value") if prompt_params else None
                 )
-                if len(resource_params) == 1:
-                    resource_param = resource_params[0]
-                    if resource_param.get("bind_value"):
-                        dialogue.select_param = parse_select_param(
-                            app_info.team_context.chat_scene,
-                            resource_param.get("bind_value"),
-                        )
-                        dialogue.chat_mode = app_info.team_context.chat_scene
-                    elif (
-                        app_info.app_code == ChatScene.ChatKnowledge.value()
-                        and not dialogue.select_param.isdigit()
-                    ):
-                        from dbgpt_app.knowledge.service import (
-                            KnowledgeService,
-                            KnowledgeSpaceRequest,
-                        )
+                if len(resource_params) > 0:
+                    if len(resource_params) == 1:
+                        resource_param = resource_params[0]
+                        if resource_param.get("bind_value"):
+                            dialogue.select_param = parse_select_param(
+                                app_info.team_context.chat_scene,
+                                resource_param.get("bind_value"),
+                            )
+                    else:
+                        # Multiple resources
+                        if (
+                            app_info.team_context.chat_scene
+                            == ChatScene.ChatWithDbExecuteOntology.value()
+                        ):
+                            rdbms_param = next(
+                                (x for x in resource_params if x.get("label") == "RDBMS"),
+                                None,
+                            )
+                            graph_param = next(
+                                (
+                                    x
+                                    for x in resource_params
+                                    if x.get("label") == "Graph DB"
+                                ),
+                                None,
+                            )
+                            if rdbms_param and rdbms_param.get("bind_value"):
+                                dialogue.select_param = parse_select_param(
+                                    app_info.team_context.chat_scene,
+                                    rdbms_param.get("bind_value"),
+                                )
+                            if graph_param and graph_param.get("bind_value"):
+                                if not dialogue.ext_info:
+                                    dialogue.ext_info = {}
+                                dialogue.ext_info["graph_store_name"] = graph_param.get(
+                                    "bind_value"
+                                )
+                        else:
+                            # Fallback for other scenes with multiple resources
+                            resource_param = resource_params[0]
+                            if resource_param.get("bind_value"):
+                                dialogue.select_param = parse_select_param(
+                                    app_info.team_context.chat_scene,
+                                    resource_param.get("bind_value"),
+                                )
+                    dialogue.chat_mode = app_info.team_context.chat_scene
+                if (
+                    app_info.app_code == ChatScene.ChatKnowledge.value()
+                    and not dialogue.select_param.isdigit()
+                ):
+                    from dbgpt_app.knowledge.service import (
+                        KnowledgeService,
+                        KnowledgeSpaceRequest,
+                    )
 
-                        ks_service = KnowledgeService()
-                        knowledge_spaces = ks_service.get_knowledge_space(
-                            KnowledgeSpaceRequest(name=dialogue.select_param)
-                        )
-                        if len(knowledge_spaces) == 1:
-                            dialogue.select_param = knowledge_spaces[0].name
+                    ks_service = KnowledgeService()
+                    knowledge_spaces = ks_service.get_knowledge_space(
+                        KnowledgeSpaceRequest(name=dialogue.select_param)
+                    )
+                    if len(knowledge_spaces) == 1:
+                        dialogue.select_param = knowledge_spaces[0].name
         return dialogue
     except Exception as e:
         logger.info(f"adapt_native_app_model error: {e}")

@@ -193,6 +193,9 @@ def _initialize_prompt_templates():
         from dbgpt_app.scene.chat_db.auto_execute.prompt import (  # noqa: F401,F811
             prompt,
         )
+        from dbgpt_app.scene.chat_db.ontology_execute.prompt import (  # noqa: F401,F811
+            prompt,
+        )
         from dbgpt_app.scene.chat_db.professional_qa.prompt import (  # noqa: F401, F811
             prompt,
         )

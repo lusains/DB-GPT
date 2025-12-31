@@ -79,6 +79,15 @@ def mount_routers(app: FastAPI):
 
     app.include_router(recommend_question_v1, prefix="/api", tags=["RecommendQuestion"])
 
+    # Semantic Dictionary API for ontology-based SQL generation
+    from dbgpt_app.scene.chat_db.ontology_execute.api import (
+        router as semantic_dict_router,
+    )
+
+    app.include_router(
+        semantic_dict_router, prefix="/api/v1/ontology", tags=["SemanticDictionary"]
+    )
+
 
 def mount_static_files(app: FastAPI, param: ApplicationConfig):
     if param.service.web.new_web_ui:

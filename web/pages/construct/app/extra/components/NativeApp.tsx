@@ -20,7 +20,7 @@ interface InitValueProps {
 
 interface FormProps {
   chat_scene?: string;
-  bind_value?: string;
+  resources?: string[];
   model?: string;
   temperature?: number;
   max_new_tokens?: number;
@@ -35,7 +35,7 @@ const NativeApp: React.FC<{
   const { t } = useTranslation();
   const [form] = Form.useForm<FormProps>();
   const chatScene = Form.useWatch('chat_scene', form);
-  const bindValue = Form.useWatch('bind_value', form);
+  const resources = Form.useWatch('resources', form);
   const model = Form.useWatch('model', form);
   const temperature = Form.useWatch('temperature', form);
   const max_new_tokens = Form.useWatch('max_new_tokens', form);
@@ -55,7 +55,12 @@ const NativeApp: React.FC<{
     form.setFieldValue('temperature', param_need?.find(param => param.type === 'temperature')?.value);
     form.setFieldValue('max_new_tokens', param_need?.find(param => param.type === 'max_new_tokens')?.value);
     form.setFieldValue('prompt_template', param_need?.find(param => param.type === 'prompt_template')?.value);
-    await run(param_need?.find(param => param.type === 'resource')?.value || '');
+
+    const resourceParams = param_need?.filter(param => param.type === 'resource') || [];
+    if (resourceParams.length > 0) {
+      await run(resourceParams[0].value || '');
+    }
+
     return [types, models] ?? [];
   });
 
@@ -78,10 +83,13 @@ const NativeApp: React.FC<{
   } = useRequest(
     async (type: string) => {
       const [, res] = await apiInterceptors(getResource({ type }));
-      if (chatScene === team_context?.chat_scene && param_need?.find(param => param.type === 'resource')?.bind_value) {
-        form.setFieldsValue({
-          bind_value: param_need?.find(param => param.type === 'resource')?.bind_value,
-        });
+      if (chatScene === team_context?.chat_scene && param_need) {
+        const resourceParams = param_need.filter(param => param.type === 'resource');
+        if (resourceParams.length > 0) {
+          form.setFieldsValue({
+            resources: resourceParams.map(param => param.bind_value),
+          });
+        }
       }
 
       return (
@@ -106,7 +114,9 @@ const NativeApp: React.FC<{
           label: (
             <div className='flex items-center gap-1'>
               <AppDefaultIcon width={4} height={4} scene={type.chat_scene} />
-              <Tooltip title={`资源类型${type.param_need.find((param: any) => param.type === 'resource')?.value}`}>
+              <Tooltip
+                title={`资源类型${type.param_need.filter((param: any) => param.type === 'resource').map((param: any) => param.value || param.label).join(', ')}`}
+              >
                 <span className='text-[#525964] dark:text-[rgba(255,255,255,0.65)]  ml-1'>{type.scene_name}</span>
               </Tooltip>
             </div>
@@ -117,35 +127,50 @@ const NativeApp: React.FC<{
     );
   }, [data]);
 
+  // 当前场景的资源需求
+  const resourceNeeds = useMemo(() => {
+    const currentScene = data?.[0]?.[1]?.find((type: any) => type.chat_scene === chatScene);
+    return currentScene?.param_need?.filter((param: any) => param.type === 'resource') || [];
+  }, [chatScene, data]);
+
   // 将数据实时返回给消费组件
   useEffect(() => {
     const rawVal = form.getFieldsValue();
+    const currentScene = appTypeOptions.find(type => type.chat_scene === rawVal.chat_scene);
+
+    const params: ParamNeed[] = [
+      { type: 'model', value: rawVal.model },
+      { type: 'temperature', value: rawVal.temperature },
+      { type: 'max_new_tokens', value: rawVal.max_new_tokens },
+      { type: 'prompt_template', value: rawVal.prompt_template },
+    ];
+
+    if (currentScene) {
+      const sceneResourceNeeds = currentScene.param_need.filter((param: any) => param.type === 'resource');
+      sceneResourceNeeds.forEach((need: any, index: number) => {
+        params.push({
+          type: 'resource',
+          value: need.value,
+          bind_value: rawVal.resources?.[index],
+          ...((need as any).label ? { label: (need as any).label } : {}),
+        } as ParamNeed);
+      });
+    }
+
     updateData([
       loading,
       [
         {
           chat_scene: rawVal.chat_scene,
-          scene_name: appTypeOptions.find(type => type.chat_scene === rawVal.chat_scene)?.scene_name,
+          scene_name: currentScene?.scene_name,
         },
-        [
-          { type: 'model', value: rawVal.model },
-          { type: 'temperature', value: rawVal.temperature },
-          { type: 'max_new_tokens', value: rawVal.max_new_tokens },
-          {
-            type: 'resource',
-            value: appTypeOptions
-              .find(type => type.chat_scene === rawVal.chat_scene)
-              ?.param_need?.find((param: any) => param.type === 'resource')?.value,
-            bind_value: rawVal.bind_value,
-          },
-          { type: 'prompt_template', value: rawVal.prompt_template },
-        ],
+        params,
       ],
     ]);
   }, [
     form,
     chatScene,
-    bindValue,
+    resources,
     model,
     temperature,
     max_new_tokens,
@@ -176,20 +201,21 @@ const NativeApp: React.FC<{
             className='w-1/2'
             options={appTypeOptions}
             placeholder={t('app_type_select')}
-            onChange={() => form.setFieldsValue({ bind_value: undefined })}
+            onChange={() => form.setFieldsValue({ resources: [] })}
           />
         </Form.Item>
-        {chatScene !== 'chat_excel' && (
-          <Form.Item label={t('Arguments')} name='bind_value'>
-            <Select
-              placeholder={t('please_select_param')}
-              allowClear
-              className='w-1/2'
-              options={options}
-              loading={paramsLoading}
-            />
-          </Form.Item>
-        )}
+        {chatScene !== 'chat_excel' &&
+          resourceNeeds.map((need: any, index: number) => (
+            <Form.Item key={index} label={need.label || t('Arguments')} name={['resources', index]}>
+              <Select
+                placeholder={t('please_select_param')}
+                allowClear
+                className='w-1/2'
+                options={options}
+                loading={paramsLoading}
+              />
+            </Form.Item>
+          ))}
         <Form.Item label={t('model')} tooltip name='model'>
           <Select
             placeholder={t('please_select_model')}

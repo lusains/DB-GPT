@@ -272,6 +272,7 @@ async def dialogue_scenes(user_info: UserRequest = Depends(get_user_from_headers
     scene_vos: List[ChatSceneVo] = []
     new_modes: List[ChatScene] = [
         ChatScene.ChatWithDbExecute,
+        ChatScene.ChatWithDbExecuteOntology,
         ChatScene.ChatWithDbQA,
         ChatScene.ChatExcel,
         ChatScene.ChatKnowledge,
@@ -314,6 +315,8 @@ async def params_list(
     if ChatScene.ChatWithDbQA.value() == chat_mode:
         result = get_db_list()
     elif ChatScene.ChatWithDbExecute.value() == chat_mode:
+        result = get_db_list()
+    elif ChatScene.ChatWithDbExecuteOntology.value() == chat_mode:
         result = get_db_list()
     elif ChatScene.ChatDashboard.value() == chat_mode:
         result = get_db_list()

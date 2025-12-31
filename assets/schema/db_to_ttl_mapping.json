@@ -1,0 +1,854 @@
+[
+  {
+    "table_name": "customer",
+    "mapped_class": "ex:customer",
+    "columns": [
+      {
+        "column_name": "customer_id",
+        "mapped_property": "ex:customer_id",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "customer_name",
+        "mapped_property": "ex:customer_name",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "customer_fieldtype",
+        "mapped_property": "ex:customer_fieldtype",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "customer_field",
+        "mapped_property": "ex:customer_field",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "customer_sale",
+        "mapped_property": "ex:customer_sale",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "customer_type",
+        "mapped_property": "ex:customer_type",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "dept_id",
+        "mapped_property": "ex:customer_belongs_to_department",
+        "property_type": "ObjectProperty"
+      }
+    ]
+  },
+  {
+    "table_name": "project",
+    "mapped_class": "ex:project",
+    "columns": [
+      {
+        "column_name": "project_id",
+        "mapped_property": "ex:project_id",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "project_name",
+        "mapped_property": "ex:project_name",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "pj_group",
+        "mapped_property": "ex:pj_group",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "pj_leader",
+        "mapped_property": "ex:pj_leader",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "pj_manager",
+        "mapped_property": "ex:pj_manager",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "pj_presale",
+        "mapped_property": "ex:pj_presale",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "pj_trace",
+        "mapped_property": "ex:pj_trace",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "pj_level",
+        "mapped_property": "ex:pj_level",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "pj_type",
+        "mapped_property": "ex:pj_type",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "pj_tag",
+        "mapped_property": "ex:pj_tag",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "pj_feature",
+        "mapped_property": "ex:pj_feature",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "pj_starttime",
+        "mapped_property": "ex:pj_starttime",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "pj_sign",
+        "mapped_property": "ex:pj_sign",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "customer_id",
+        "mapped_property": "ex:contain_projects",
+        "property_type": "ObjectProperty"
+      },
+      {
+        "column_name": "dept_id",
+        "mapped_property": "ex:project_belongs_to_department",
+        "property_type": "ObjectProperty"
+      }
+    ]
+  },
+  {
+    "table_name": "service",
+    "mapped_class": "ex:service",
+    "columns": [
+      {
+        "column_name": "service_id",
+        "mapped_property": "ex:service_id",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "service_theme",
+        "mapped_property": "ex:service_theme",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "approval_status",
+        "mapped_property": "ex:approval_status",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "service_content",
+        "mapped_property": "ex:service_content",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "service_mode",
+        "mapped_property": "ex:service_mode",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "service_customer_type",
+        "mapped_property": "ex:service_customer_type",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "service_estimated_cost",
+        "mapped_property": "ex:service_estimated_cost",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "service_initiator",
+        "mapped_property": "ex:service_initiator",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "service_initiator_dept",
+        "mapped_property": "ex:service_initiator_dept",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "service_create_time",
+        "mapped_property": "ex:service_create_time",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "delivery_manager",
+        "mapped_property": "ex:delivery_manager",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "service_stage_status",
+        "mapped_property": "ex:service_stage_status",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "estimated_start_time",
+        "mapped_property": "ex:estimated_start_time",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "estimated_end_time",
+        "mapped_property": "ex:estimated_end_time",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "maintenance_period",
+        "mapped_property": "ex:maintenance_period",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "service_address",
+        "mapped_property": "ex:service_address",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "delivery_method",
+        "mapped_property": "ex:delivery_method",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "service_province",
+        "mapped_property": "ex:service_province",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "service_city",
+        "mapped_property": "ex:service_city",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "is_standard_price",
+        "mapped_property": "ex:is_standard_price",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "service_tags",
+        "mapped_property": "ex:service_tags",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "urgency_level",
+        "mapped_property": "ex:urgency_level",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "settlement_terms",
+        "mapped_property": "ex:settlement_terms",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "service_used_amount",
+        "mapped_property": "ex:service_used_amount",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "service_cost_source",
+        "mapped_property": "ex:service_cost_source",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "person_in_charge_from_company",
+        "mapped_property": "ex:person_in_charge_from_company",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "service_category_id",
+        "mapped_property": "ex:belongs_to_service_catalogy",
+        "property_type": "ObjectProperty"
+      },
+      {
+        "column_name": "level_2_corporate_budget_id",
+        "mapped_property": "ex:depend_on_level_2_corporate_budget",
+        "property_type": "ObjectProperty"
+      },
+      {
+        "column_name": "level_3_corporate_budget_id",
+        "mapped_property": "ex:depend_on_level_3_corporate_budget",
+        "property_type": "ObjectProperty"
+      },
+      {
+        "column_name": "project_budget_id",
+        "mapped_property": "ex:depend_on_project_budget",
+        "property_type": "ObjectProperty"
+      },
+      {
+        "column_name": "dept_id",
+        "mapped_property": "ex:multi-customer_service_belongs_to_department",
+        "property_type": "ObjectProperty"
+      },
+      {
+        "column_name": "product_id",
+        "mapped_property": "ex:product_involved_in_service",
+        "property_type": "ObjectProperty"
+      },
+      {
+        "column_name": "project_id",
+        "mapped_property": "ex:generate_single-customer_service",
+        "property_type": "ObjectProperty"
+      }
+    ]
+  },
+  {
+    "table_name": "task",
+    "mapped_class": "ex:task",
+    "columns": [
+      {
+        "column_name": "task_id",
+        "mapped_property": "ex:task_id",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "task_name",
+        "mapped_property": "ex:task_name",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "task_date",
+        "mapped_property": "ex:task_date",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "task_amount",
+        "mapped_property": "ex:task_amount",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "travel_expense",
+        "mapped_property": "ex:travel_expense",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "tax_rate",
+        "mapped_property": "ex:tax_rate",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "service_provider",
+        "mapped_property": "ex:service_provider",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "contract_entity",
+        "mapped_property": "ex:contract_entity",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "task_creator",
+        "mapped_property": "ex:task_creator",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "task_create_time",
+        "mapped_property": "ex:task_create_time",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "task_start_time",
+        "mapped_property": "ex:task_start_time",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "task_end_time",
+        "mapped_property": "ex:task_end_time",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "quote_approval_time",
+        "mapped_property": "ex:quote_approval_time",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "task_approval_status",
+        "mapped_property": "ex:task_approval_status",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "task_sign_status",
+        "mapped_property": "ex:task_sign_status",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "task_engineer_total_price",
+        "mapped_property": "ex:Task_Engineer_Total_Price",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "task_engineer_total_service_hours",
+        "mapped_property": "ex:Task_Engineer_Total_Service_Hours",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "task_engineer_unit_price",
+        "mapped_property": "ex:Task_Engineer_Unit_Price",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "task_engineer_level",
+        "mapped_property": "ex:task_Engineer_Level",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "task_engineer_name",
+        "mapped_property": "ex:task_Engineer_name",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "task_engineer_title",
+        "mapped_property": "ex:task_Engineer_title",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "task_project_phase",
+        "mapped_property": "ex:tast_Project_Phase",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "service_id",
+        "mapped_property": "ex:generate_task",
+        "property_type": "ObjectProperty"
+      },
+      {
+        "column_name": "product_category_id",
+        "mapped_property": "ex:project-based_task_belongs_to_product_catalogy",
+        "property_type": "ObjectProperty"
+      },
+      {
+        "column_name": "service_type_id",
+        "mapped_property": "ex:project-based_task_belongs_to_service_type",
+        "property_type": "ObjectProperty"
+      }
+    ]
+  },
+  {
+    "table_name": "project_budget",
+    "mapped_class": "ex:project_budget",
+    "columns": [
+      {
+        "column_name": "project_budget_id",
+        "mapped_property": "ex:project_budget_id",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "project_budget_amount",
+        "mapped_property": "ex:project_budget_amount",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "project_budget_dependency_type",
+        "mapped_property": "ex:project_budget_dependency_type",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "project_remaining_occupiable_amount",
+        "mapped_property": "ex:project_remaining_occupiable_amount",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "project_remaining_usable_amount",
+        "mapped_property": "ex:project_remaining_usable_amount",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "opportunity_id",
+        "mapped_property": "ex:depend_on_opportunity",
+        "property_type": "ObjectProperty"
+      },
+      {
+        "column_name": "order_id",
+        "mapped_property": "ex:depend_on_order",
+        "property_type": "ObjectProperty"
+      },
+      {
+        "column_name": "project_id",
+        "mapped_property": "ex:generate_project_budget",
+        "property_type": "ObjectProperty"
+      }
+    ]
+  },
+  {
+    "table_name": "corporate_budget",
+    "mapped_class": "ex:corporate_budget",
+    "columns": [
+      {
+        "column_name": "corporate_budget_id",
+        "mapped_property": "ex:corporate_budget_id",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "corporate_budget_subject",
+        "mapped_property": "ex:corporate_budget_subject",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "corporate_budget_item_description",
+        "mapped_property": "ex:corporate_budget_item_description",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "corporate_budget_level",
+        "mapped_property": "ex:corporate_budget_level",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "parent_corporate_budget_id",
+        "mapped_property": "ex:belongs_to_parent_corporate_budget",
+        "property_type": "ObjectProperty"
+      }
+    ]
+  },
+  {
+    "table_name": "opportunity",
+    "mapped_class": "ex:opportunity",
+    "columns": [
+      {
+        "column_name": "opportunity_id",
+        "mapped_property": "ex:opportunity_id",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "opportunity_details",
+        "mapped_property": "ex:opportunity_details",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "customer_id",
+        "mapped_property": "ex:generate_opportunity",
+        "property_type": "ObjectProperty"
+      }
+    ]
+  },
+  {
+    "table_name": "order",
+    "mapped_class": "ex:order",
+    "columns": [
+      {
+        "column_name": "order_id",
+        "mapped_property": "ex:order_id",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "product_id",
+        "mapped_property": "ex:contain_product",
+        "property_type": "ObjectProperty"
+      },
+      {
+        "column_name": "opportunity_id",
+        "mapped_property": "ex:generate_order",
+        "property_type": "ObjectProperty"
+      },
+      {
+        "column_name": "dept_id",
+        "mapped_property": "ex:order_belongs_to_department",
+        "property_type": "ObjectProperty"
+      }
+    ]
+  },
+  {
+    "table_name": "product",
+    "mapped_class": "ex:product",
+    "columns": [
+      {
+        "column_name": "product_id",
+        "mapped_property": "ex:product_id",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "product_name",
+        "mapped_property": "ex:product_name",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "product_category_id",
+        "mapped_property": "ex:belongs_to_product_catalogy",
+        "property_type": "ObjectProperty"
+      },
+      {
+        "column_name": "produce_line_name",
+        "mapped_property": "ex:belongs_to_product_line",
+        "property_type": "ObjectProperty"
+      }
+    ]
+  },
+  {
+    "table_name": "product_catelogy",
+    "mapped_class": "ex:product_catelogy",
+    "columns": [
+      {
+        "column_name": "product_category_id",
+        "mapped_property": "ex:product_category_id",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "product_category_name",
+        "mapped_property": "ex:product_category_name",
+        "property_type": "DataProperty"
+      }
+    ]
+  },
+  {
+    "table_name": "service_catalogy",
+    "mapped_class": "ex:service_catalogy",
+    "columns": [
+      {
+        "column_name": "service_category_id",
+        "mapped_property": "ex:service_category_id",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "service_category_name",
+        "mapped_property": "ex:service_category_name",
+        "property_type": "DataProperty"
+      }
+    ]
+  },
+  {
+    "table_name": "service_type",
+    "mapped_class": "ex:service_type",
+    "columns": [
+      {
+        "column_name": "service_type_id",
+        "mapped_property": "ex:service_type_id",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "service_type_name",
+        "mapped_property": "ex:service_type_name",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "service_type_level",
+        "mapped_property": "ex:service_type_level",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "parent_service_type_id",
+        "mapped_property": "ex:belongs_to_level_1_service_type",
+        "property_type": "ObjectProperty"
+      }
+    ]
+  },
+  {
+    "table_name": "department",
+    "mapped_class": "ex:department",
+    "columns": [
+      {
+        "column_name": "dept_id",
+        "mapped_property": "ex:dept_id",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "dept_name",
+        "mapped_property": "ex:dept_name",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "dept_level",
+        "mapped_property": "ex:dept_level",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "parent_dept_id",
+        "mapped_property": "ex:belongs_to_parent_department",
+        "property_type": "ObjectProperty"
+      }
+    ]
+  },
+  {
+    "table_name": "employee_work",
+    "mapped_class": "ex:employee_work",
+    "columns": [
+      {
+        "column_name": "employee_work_id",
+        "mapped_property": "ex:employee_work_id",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "employee_work_editor",
+        "mapped_property": "ex:employee_work_editor",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "employee_work_time",
+        "mapped_property": "ex:employee_work_time",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "employee_work_hours",
+        "mapped_property": "ex:employee_work_hours",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "employee_work_method",
+        "mapped_property": "ex:employee_work_method",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "employee_work_type",
+        "mapped_property": "ex:employee_work_type",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "employee_work_stage",
+        "mapped_property": "ex:employee_work_stage",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "service_type_id",
+        "mapped_property": "ex:employee_work_belongs_to_service_type",
+        "property_type": "ObjectProperty"
+      },
+      {
+        "column_name": "project_id",
+        "mapped_property": "ex:generate_employee_work",
+        "property_type": "ObjectProperty"
+      },
+      {
+        "column_name": "product_id",
+        "mapped_property": "ex:product_involved_in_employee_work",
+        "property_type": "ObjectProperty"
+      }
+    ]
+  },
+  {
+    "table_name": "contractor_work",
+    "mapped_class": "ex:contractor_work",
+    "columns": [
+      {
+        "column_name": "contractor_work_id",
+        "mapped_property": "ex:contractor_work_id",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "contractor_work_date",
+        "mapped_property": "ex:contractor_work_Date",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "contractor_work_description",
+        "mapped_property": "ex:contractor_work_Description",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "contractor_work_engineer",
+        "mapped_property": "ex:contractor_work_Engineer",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "contractor_work_method",
+        "mapped_property": "ex:contractor_work_Method",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "contractor_work_type",
+        "mapped_property": "ex:contractor_work_Type",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "contractor_work_vendor",
+        "mapped_property": "ex:contractor_work_Vendor",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "contractor_work_project_phase",
+        "mapped_property": "ex:contractor_work__Project_Phase",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "contractor_work_cost",
+        "mapped_property": "ex:contractor_work_cost",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "contractor_work_hours_ratio",
+        "mapped_property": "ex:contractor_work_hours_Ratio",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "contractor_work_hours_acceptance",
+        "mapped_property": "ex:contractor_work_hours_acceptance",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "contractor_work_hours_reported",
+        "mapped_property": "ex:contractor_work_hours_reported",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "product_id",
+        "mapped_property": "ex:contractor_work_belongs_to_product",
+        "property_type": "ObjectProperty"
+      },
+      {
+        "column_name": "task_id",
+        "mapped_property": "ex:contractor_work_belongs_to_task",
+        "property_type": "ObjectProperty"
+      },
+      {
+        "column_name": "project_id",
+        "mapped_property": "ex:project_generate_contractor_work",
+        "property_type": "ObjectProperty"
+      }
+    ]
+  },
+  {
+    "table_name": "produce_line",
+    "mapped_class": "ex:produce_line",
+    "columns": [
+      {
+        "column_name": "produce_line_name",
+        "mapped_property": "ex:produce_line_name",
+        "property_type": "DataProperty"
+      }
+    ]
+  },
+  {
+    "table_name": "contractor_work_acceptance",
+    "mapped_class": "ex:contractor_work_acceptance",
+    "columns": [
+      {
+        "column_name": "contractor_work_acceptance_content",
+        "mapped_property": "ex:contractor_work_acceptance_content",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "contractor_work_acceptance_id",
+        "mapped_property": "ex:contractor_work_acceptance_id",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "contractor_work_acceptance_month",
+        "mapped_property": "ex:contractor_work_acceptance_month",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "contractor_work_acceptance_hours",
+        "mapped_property": "ex:验收核算后的成本费用中，差旅费是多少",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "contractor_work_acceptance_quality",
+        "mapped_property": "ex:contractor_work_acceptance_quality",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "contractor_work_acceptance_total_cost",
+        "mapped_property": "ex:contractor_work_acceptance_total_cost",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "contractor_work_acceptance_travel_cost",
+        "mapped_property": "ex:contractor_work_acceptance_travel_cost",
+        "property_type": "DataProperty"
+      },
+      {
+        "column_name": "task_id",
+        "mapped_property": "ex:task_generate_contractor_work_acceptance",
+        "property_type": "ObjectProperty"
+      }
+    ]
+  }
+]

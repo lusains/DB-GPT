@@ -1,0 +1,88 @@
+{
+  "term_mappings": [
+    {
+      "canonical": "二次开发",
+      "property": "service_type_name",
+      "aliases": ["二开", "二次开发", "定制开发"],
+      "abbreviations": [],
+      "slang": [],
+      "context_hints": ["二开", "定制开发", "外包工作类型"],
+      "enum_values": ["二次开发", "定制开发"],
+      "description": "服务类型字段，'二开'是'二次开发'的简称，查询时应使用LIKE模糊匹配"
+    },
+    {
+      "canonical": "项目名称",
+      "property": "project_name",
+      "aliases": ["项目", "工程名称"],
+      "abbreviations": ["pj"],
+      "slang": [],
+      "context_hints": []
+    },
+    {
+      "canonical": "客户名称",
+      "property": "customer_name",
+      "aliases": ["客户", "甲方", "客户公司"],
+      "abbreviations": [],
+      "slang": ["金主"],
+      "context_hints": []
+    },
+    {
+      "canonical": "产品名称",
+      "property": "product_name",
+      "aliases": ["产品", "商品"],
+      "abbreviations": [],
+      "slang": [],
+      "context_hints": []
+    },
+    {
+      "canonical": "合同金额",
+      "property": "contract_amount",
+      "aliases": ["金额", "合同额", "签约金额"],
+      "abbreviations": [],
+      "slang": [],
+      "context_hints": ["合同", "金额"]
+    },
+    {
+      "canonical": "部门名称",
+      "property": "dept_name",
+      "aliases": ["部门", "团队", "组织"],
+      "abbreviations": [],
+      "slang": [],
+      "context_hints": []
+    },
+    {
+      "canonical": "供应商名称",
+      "property": "supplier_name",
+      "aliases": ["供应商", "乙方", "服务商"],
+      "abbreviations": [],
+      "slang": [],
+      "context_hints": []
+    },
+    {
+      "canonical": "项目状态",
+      "property": "pj_status",
+      "aliases": ["状态", "进度"],
+      "abbreviations": [],
+      "slang": [],
+      "context_hints": ["项目"]
+    },
+    {
+      "canonical": "项目级别",
+      "property": "pj_level",
+      "aliases": ["级别", "等级", "优先级"],
+      "abbreviations": [],
+      "slang": [],
+      "context_hints": ["项目"]
+    }
+  ],
+  "global_abbreviations": {
+    "Q1": "第一季度",
+    "Q2": "第二季度",
+    "Q3": "第三季度",
+    "Q4": "第四季度",
+    "YTD": "年初至今",
+    "MTD": "月初至今",
+    "YOY": "同比",
+    "MOM": "环比"
+  }
+}
