@@ -39,6 +39,12 @@ class ChatScene(Enum):
         describe="Ontology-aware dialogue with MySQL data using OWL schema mapping.",
         param_types=["RDBMS Select", "Graph Select"],
     )
+    ChatWithDbVanna = Scene(
+        code="chat_with_db_vanna",
+        name="Chat Data (Vanna)",
+        describe="Vanna-enhanced Text-to-SQL with trained schema and SQL examples.",
+        param_types=["DB Select"],
+    )
     ExcelLearning = Scene(
         code="excel_learning",
         name="Excel Learning",

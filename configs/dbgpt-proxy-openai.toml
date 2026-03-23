@@ -20,7 +20,7 @@ persist_path = "pilot/data"
 
 [rag.storage.graph]
 type = "neo4j"
-host="127.0.0.1"
+host="10.213.42.166"
 port=7687
 username="neo4j"
 database="neo4j"

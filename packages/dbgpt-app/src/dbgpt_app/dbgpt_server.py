@@ -88,6 +88,13 @@ def mount_routers(app: FastAPI):
         semantic_dict_router, prefix="/api/v1/ontology", tags=["SemanticDictionary"]
     )
 
+    # Vanna AI Training API for RAG-enhanced Text-to-SQL
+    from dbgpt_serve.vanna import init_endpoints as init_vanna_endpoints
+    from dbgpt_serve.vanna import router as vanna_router
+
+    init_vanna_endpoints(system_app)
+    app.include_router(vanna_router, prefix="/api/v1/vanna", tags=["Vanna"])
+
 
 def mount_static_files(app: FastAPI, param: ApplicationConfig):
     if param.service.web.new_web_ui:

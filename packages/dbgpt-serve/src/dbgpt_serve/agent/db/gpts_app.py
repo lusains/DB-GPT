@@ -1410,6 +1410,16 @@ def native_app_params():
             {"type": AppParamType.MaxNewTokens.value, "value": None},
         ],
     }
+    chat_with_db_vanna = {
+        "chat_scene": ChatScene.ChatWithDbVanna.value(),
+        "scene_name": ChatScene.ChatWithDbVanna.scene_name(),
+        "param_need": [
+            {"type": AppParamType.Resource.value, "value": ResourceType.DB.value},
+            {"type": AppParamType.Model.value, "value": None},
+            {"type": AppParamType.Temperature.value, "value": None},
+            {"type": AppParamType.MaxNewTokens.value, "value": None},
+        ],
+    }
     chat_knowledge = {
         "chat_scene": ChatScene.ChatKnowledge.value(),
         "scene_name": ChatScene.ChatKnowledge.scene_name(),
@@ -1447,6 +1457,7 @@ def native_app_params():
         chat_with_db_qa,
         chat_with_db_execute,
         chat_with_db_execute_ontology,
+        chat_with_db_vanna,
         chat_knowledge,
         chat_dashboard,
         chat_normal,
@@ -1464,6 +1475,7 @@ def adapt_native_app_model(dialogue: ConversationVo):
             ChatScene.ChatWithDbQA.value(),
             ChatScene.ChatWithDbExecute.value(),
             ChatScene.ChatWithDbExecuteOntology.value(),
+            ChatScene.ChatWithDbVanna.value(),
             ChatScene.ChatDashboard.value(),
             ChatScene.ChatNormal.value(),
         ]:
