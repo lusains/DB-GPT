@@ -1,0 +1,305 @@
+openapi: 3.0.3
+info:
+  title: Vanna AI Integration API
+  description: |
+    API endpoints for Vanna AI training data management in DB-GPT.
+    Enables training with DDL, SQL examples, and documentation for enhanced Text-to-SQL generation.
+  version: 1.0.0
+  contact:
+    name: DB-GPT Team
+
+servers:
+  - url: /api/v1
+    description: DB-GPT API Server
+
+tags:
+  - name: Training
+    description: Training data management operations
+  - name: Schema
+    description: Automatic schema training
+
+paths:
+  /vanna/train:
+    post:
+      tags:
+        - Training
+      summary: Add training data
+      description: |
+        Add a single training data entry (DDL, SQL example, or documentation)
+        to the Vanna training store for a specific database.
+      operationId: addTrainingData
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrainingRequest'
+            examples:
+              ddl:
+                summary: Add DDL
+                value:
+                  db_name: "mydb"
+                  type: "ddl"
+                  content: "CREATE TABLE users (id INT PRIMARY KEY, name VARCHAR(100), email VARCHAR(255))"
+              sql:
+                summary: Add SQL example
+                value:
+                  db_name: "mydb"
+                  type: "sql"
+                  content: "SELECT COUNT(*) FROM users WHERE created_at > DATE_SUB(NOW(), INTERVAL 30 DAY)"
+                  question: "How many users registered in the last 30 days?"
+              documentation:
+                summary: Add documentation
+                value:
+                  db_name: "mydb"
+                  type: "documentation"
+                  content: "The 'users' table contains all registered users. 'created_at' is the registration timestamp."
+      responses:
+        '200':
+          description: Training data added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrainingResponse'
+        '400':
+          description: Invalid request (missing fields, validation error)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Database not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /vanna/train-schema/{db_name}:
+    post:
+      tags:
+        - Schema
+      summary: Auto-train from database schema
+      description: |
+        Automatically extract DDL statements from all tables in the specified database
+        and add them to the training store. This is a bulk operation.
+      operationId: trainSchema
+      parameters:
+        - name: db_name
+          in: path
+          required: true
+          description: Name of the database connection in DB-GPT
+          schema:
+            type: string
+          example: "mydb"
+      responses:
+        '200':
+          description: Schema training completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaTrainingResponse'
+        '404':
+          description: Database not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Schema extraction failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /vanna/training-data/{db_name}:
+    get:
+      tags:
+        - Training
+      summary: List training data
+      description: |
+        Retrieve all training data entries for a specific database.
+        Supports filtering by type.
+      operationId: listTrainingData
+      parameters:
+        - name: db_name
+          in: path
+          required: true
+          description: Name of the database
+          schema:
+            type: string
+          example: "mydb"
+        - name: type
+          in: query
+          required: false
+          description: Filter by training data type
+          schema:
+            type: string
+            enum: [ddl, sql, documentation]
+        - name: limit
+          in: query
+          required: false
+          description: Maximum number of entries to return
+          schema:
+            type: integer
+            default: 100
+            minimum: 1
+            maximum: 1000
+        - name: offset
+          in: query
+          required: false
+          description: Pagination offset
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+      responses:
+        '200':
+          description: List of training data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrainingDataList'
+
+  /vanna/training-data/{id}:
+    delete:
+      tags:
+        - Training
+      summary: Delete training data
+      description: Remove a specific training data entry by ID
+      operationId: deleteTrainingData
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Training data ID (format: uuid-type)
+          schema:
+            type: string
+          example: "abc123-ddl"
+      responses:
+        '200':
+          description: Training data deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteResponse'
+        '404':
+          description: Training data not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    TrainingRequest:
+      type: object
+      required:
+        - db_name
+        - type
+        - content
+      properties:
+        db_name:
+          type: string
+          description: Target database name
+          example: "mydb"
+        type:
+          type: string
+          enum: [ddl, sql, documentation]
+          description: Type of training data
+          example: "sql"
+        content:
+          type: string
+          description: The training content (DDL statement, SQL query, or documentation text)
+          example: "SELECT * FROM users WHERE status = 'active'"
+        question:
+          type: string
+          description: Natural language question (required for type=sql)
+          example: "Show all active users"
+
+    TrainingResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        id:
+          type: string
+          description: Created training data ID
+          example: "abc123def456-sql"
+        message:
+          type: string
+          example: "Training data added successfully"
+
+    SchemaTrainingResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        tables_trained:
+          type: integer
+          description: Number of tables trained
+          example: 25
+        message:
+          type: string
+          example: "Schema training completed: 25 tables"
+
+    TrainingDataList:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total count of training data
+          example: 50
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrainingDataItem'
+
+    TrainingDataItem:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "abc123-ddl"
+        db_name:
+          type: string
+          example: "mydb"
+        type:
+          type: string
+          enum: [ddl, sql, documentation]
+          example: "ddl"
+        content:
+          type: string
+          example: "CREATE TABLE users..."
+        question:
+          type: string
+          nullable: true
+          example: null
+        created_at:
+          type: string
+          format: date-time
+          example: "2025-12-31T10:00:00Z"
+
+    DeleteResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "Training data deleted"
+
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: "Database 'mydb' not found"
+        code:
+          type: string
+          example: "NOT_FOUND"
